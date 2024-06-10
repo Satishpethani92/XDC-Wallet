@@ -19,6 +19,7 @@ import klaytn from './klaytn-ws';
 import opmew from './op-mew-ws';
 import arthera from './arthera-ws';
 import artheratest from './arthera-test-ws';
+import txdcnetwork from './txdcnetwork-ws';
 
 export {
   etcethereumclassiccooperativeparityws,
@@ -30,6 +31,7 @@ export {
   gochain,
   mintmemewws,
   xdcnetwork,
+  txdcnetwork,
   moonbeam,
   moonriver,
   rootstock,

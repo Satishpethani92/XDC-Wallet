@@ -19,6 +19,7 @@ import KLAY from './KLAY';
 import OP from './OP';
 import AA from './AA';
 import AAT from './AAT';
+import TXDC from './TXDC';
 
 export {
   ETH,
@@ -30,6 +31,7 @@ export {
   GO,
   MINTME,
   XDC,
+  TXDC,
   MOONBEAM,
   MOONRIVER,
   ROOTSTOCK,
