@@ -22,6 +22,8 @@ import artheratest from './arthera-test-ws';
 import txdcnetwork from './txdcnetwork-ws';
 
 export {
+  xdcnetwork,
+  txdcnetwork,
   etcethereumclassiccooperativeparityws,
   ethmewws,
   goerlimewws,
@@ -30,8 +32,6 @@ export {
   maticmewws,
   gochain,
   mintmemewws,
-  xdcnetwork,
-  txdcnetwork,
   moonbeam,
   moonriver,
   rootstock,

@@ -22,6 +22,8 @@ import AAT from './AAT';
 import TXDC from './TXDC';
 
 export {
+  XDC,
+  TXDC,
   ETH,
   GOERLI,
   HOLESKY,
@@ -30,8 +32,6 @@ export {
   MATIC,
   GO,
   MINTME,
-  XDC,
-  TXDC,
   MOONBEAM,
   MOONRIVER,
   ROOTSTOCK,

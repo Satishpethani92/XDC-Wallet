@@ -140,7 +140,9 @@ export default {
           this.filterTypes.length > 0
             ? [...this.filterTypes]
             : Object.keys(types);
-        unsorted.splice(unsorted.indexOf('ETH'), 1);
+        console.log(Object.keys(types));
+        console.log(this.filterTypes);
+        unsorted.splice(unsorted.indexOf('XDC'), 1);
         unsorted.sort();
         const test = unsorted.filter(item => {
           return types[item].isTestNetwork;
@@ -182,6 +184,9 @@ export default {
       if (this.toggleType === 1) {
         return allNetworks.filter(item => item.isTestNetwork);
       }
+
+      console.log(allNetworks);
+
       return allNetworks;
     },
     /**
