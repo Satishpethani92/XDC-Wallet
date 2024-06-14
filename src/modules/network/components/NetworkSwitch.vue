@@ -140,9 +140,9 @@ export default {
           this.filterTypes.length > 0
             ? [...this.filterTypes]
             : Object.keys(types);
-        console.log(Object.keys(types));
-        console.log(this.filterTypes);
         unsorted.splice(unsorted.indexOf('XDC'), 1);
+        unsorted.splice(unsorted.indexOf('TXDC'), 1);
+        unsorted.splice(unsorted.indexOf('ETH'), 1);
         unsorted.sort();
         const test = unsorted.filter(item => {
           return types[item].isTestNetwork;
@@ -152,6 +152,8 @@ export default {
         });
         const sorted = main.concat(test);
         sorted.unshift('ETH');
+        sorted.unshift('TXDC');
+        sorted.unshift('XDC');
         return sorted;
       }
       return [];
