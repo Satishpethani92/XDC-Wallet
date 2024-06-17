@@ -151,9 +151,7 @@ export default {
           return !types[item].isTestNetwork;
         });
         const sorted = main.concat(test);
-        sorted.unshift('ETH');
-        sorted.unshift('TXDC');
-        sorted.unshift('XDC');
+        sorted.unshift('XDC', 'TXDC', 'ETH');
         return sorted;
       }
       return [];
