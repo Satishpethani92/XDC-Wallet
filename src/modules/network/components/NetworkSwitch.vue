@@ -185,8 +185,6 @@ export default {
         return allNetworks.filter(item => item.isTestNetwork);
       }
 
-      console.log(allNetworks);
-
       return allNetworks;
     },
     /**
