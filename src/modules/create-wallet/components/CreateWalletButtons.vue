@@ -73,7 +73,6 @@ import { Toast, ERROR } from '@/modules/toast/handler/handlerToast';
 import enkryptMarketing from '@/core/mixins/enkryptMarketing.mixin';
 import handlerAnalytics from '@/modules/analytics-opt-in/handlers/handlerAnalytics.mixin';
 import {
-  COMMON,
   CREATE_WALLET
 } from '@/modules/analytics-opt-in/handlers/configs/events.js';
 import { ROUTES_HOME } from '@/core/configs/configRoutes';
@@ -87,35 +86,35 @@ export default {
       return !this.isOfflineApp
         ? [
             /* Enkrypt */
-            {
-              color: 'white',
-              title: 'Install Enkrypt browser extension',
-              subtitle:
-                'MEW’s official browser extension. Connect to web3 on Ethereum and Polkadot, manage your NFTs, buy, send and swap',
-              official: true,
-              recommended: true,
-              icon: require('@/assets/images/icons/icon-enkrypt-block.svg'),
-              alt: 'Enkrypt',
-              fn: () => {
-                this.trackCreateWalletAmplitude(COMMON.GOOGLE_STORE);
-                this.openEnkrypt();
-              }
-            },
+            // {
+            //   color: 'white',
+            //   title: 'Install Enkrypt browser extension',
+            //   subtitle:
+            //     'MEW’s official browser extension. Connect to web3 on Ethereum and Polkadot, manage your NFTs, buy, send and swap',
+            //   official: true,
+            //   recommended: true,
+            //   icon: require('@/assets/images/icons/icon-enkrypt-block.svg'),
+            //   alt: 'Enkrypt',
+            //   fn: () => {
+            //     this.trackCreateWalletAmplitude(COMMON.GOOGLE_STORE);
+            //     this.openEnkrypt();
+            //   }
+            // },
             /* MEW wallet Button */
-            {
-              color: 'white',
-              title: 'Download MEW wallet app',
-              subtitle:
-                'Our official mobile app to create your wallet, and connect to MEW Web using your mobile phone',
-              official: true,
-              recommended: true,
-              icon: require('@/assets/images/icons/icon-mew-wallet.png'),
-              alt: 'MEW wallet',
-              fn: () => {
-                this.trackCreateWalletAmplitude(COMMON.MEW_WALLET);
-                this.openMewWallet();
-              }
-            },
+            // {
+            //   color: 'white',
+            //   title: 'Download MEW wallet app',
+            //   subtitle:
+            //     'Our official mobile app to create your wallet, and connect to MEW Web using your mobile phone',
+            //   official: true,
+            //   recommended: true,
+            //   icon: require('@/assets/images/icons/icon-mew-wallet.png'),
+            //   alt: 'MEW wallet',
+            //   fn: () => {
+            //     this.trackCreateWalletAmplitude(COMMON.MEW_WALLET);
+            //     this.openMewWallet();
+            //   }
+            // },
             /* Hardware wallets */
             {
               color: 'white',

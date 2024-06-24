@@ -255,34 +255,34 @@ export default {
       if (!this.isOfflineApp) {
         return [
           /* Enkrypt */
-          {
-            color: 'white',
-            title: 'Enkrypt',
-            subtitle: 'Connect with Enkrypt browser extension',
-            official: true,
-            recommended: true,
-            useBtn: true,
-            icon: require('@/assets/images/icons/icon-enkrypt-block.svg'),
-            alt: 'Enkrypt',
-            fn: () => {
-              this.trackAccessWalletAmplitude(ACCESS_WALLET.ENKRYPT);
-              this.checkEnkrypt();
-            }
-          },
+          // {
+          //   color: 'white',
+          //   title: 'Enkrypt',
+          //   subtitle: 'Connect with Enkrypt browser extension',
+          //   official: true,
+          //   recommended: true,
+          //   useBtn: true,
+          //   icon: require('@/assets/images/icons/icon-enkrypt-block.svg'),
+          //   alt: 'Enkrypt',
+          //   fn: () => {
+          //     this.trackAccessWalletAmplitude(ACCESS_WALLET.ENKRYPT);
+          //     this.checkEnkrypt();
+          //   }
+          // },
           /* MEW wallet Button */
-          {
-            color: 'white',
-            title: 'MEW wallet app',
-            subtitle: 'Connect MEW Wallet app to MEW web',
-            official: true,
-            recommended: true,
-            useBtn: true,
-            icon: require('@/assets/images/icons/icon-mew-wallet.png'),
-            alt: 'MEW wallet',
-            fn: () => {
-              this.openMEWwallet();
-            }
-          },
+          // {
+          //   color: 'white',
+          //   title: 'MEW wallet app',
+          //   subtitle: 'Connect MEW Wallet app to MEW web',
+          //   official: true,
+          //   recommended: true,
+          //   useBtn: true,
+          //   icon: require('@/assets/images/icons/icon-mew-wallet.png'),
+          //   alt: 'MEW wallet',
+          //   fn: () => {
+          //     this.openMEWwallet();
+          //   }
+          // },
           /* Browser extension */
           {
             color: 'white',
