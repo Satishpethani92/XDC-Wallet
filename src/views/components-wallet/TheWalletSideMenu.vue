@@ -291,7 +291,22 @@ import message from '@/assets/images/icons/icon-message-enable.svg';
 import settings from '@/assets/images/icons/icon-setting-enable.svg';
 import logout from '@/assets/images/icons/icon-logout-enable.svg';
 import { EventBus } from '@/core/plugins/eventBus';
-import { ETH, BSC, MATIC, GOERLI, ARB, OP } from '@/utils/networks/types';
+import {
+  ETH,
+  HOLESKY,
+  BSC,
+  ROOTSTOCK,
+  ETC,
+  XDC,
+  MOONBEAM,
+  MOONRIVER,
+  POL,
+  AURORA,
+  ARB,
+  FTM,
+  OP,
+  COTI
+} from '@/utils/networks/types';
 import { ROUTES_WALLET } from '@/core/configs/configRoutes';
 import handlerAnalytics from '@/modules/analytics-opt-in/handlers/handlerAnalytics.mixin';
 import {
@@ -324,9 +339,23 @@ export default {
       onSettings: false,
       showLogoutPopup: false,
       routeNetworks: {
-        [ROUTES_WALLET.SWAP.NAME]: [ETH, BSC, MATIC],
-        [ROUTES_WALLET.STAKE.NAME]: [ETH, GOERLI],
-        [ROUTES_WALLET.NFT_MANAGER.NAME]: [ETH, BSC, MATIC]
+        [ROUTES_WALLET.SWAP.NAME]: [
+          ETH,
+          BSC,
+          ROOTSTOCK,
+          ETC,
+          XDC,
+          MOONBEAM,
+          MOONRIVER,
+          POL,
+          AURORA,
+          ARB,
+          FTM,
+          OP,
+          COTI
+        ],
+        [ROUTES_WALLET.STAKE.NAME]: [ETH, HOLESKY],
+        [ROUTES_WALLET.NFT_MANAGER.NAME]: [ETH, BSC, POL]
       },
       footer: {
         text: 'Need help?',
@@ -448,13 +477,7 @@ export default {
             route: undefined
           }
         ];
-        if (
-          this.network.type.name === ETH.name ||
-          this.network.type.name === BSC.name ||
-          this.network.type.name === MATIC.name ||
-          this.network.type.name === ARB.name ||
-          this.network.type.name === OP.name
-        ) {
+        if (this.network.type.canBuy) {
           sectionTwo.push({
             title: this.$t('interface.menu.buy-sell'),
             icon: buy,

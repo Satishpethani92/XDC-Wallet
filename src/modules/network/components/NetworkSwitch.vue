@@ -52,7 +52,7 @@
     >
       <v-container
         v-for="(network, i) in networks"
-        :key="network.name"
+        :key="network.name + network.chainID"
         :class="[
           { 'network-border-first': i === 0 },
           { 'network-border-last': i + 1 === networks.length },
@@ -71,7 +71,12 @@
             {{ network.name }}
           </div>
           <div class="px-2 textLight--text">-</div>
-          <div class="textLight--text">
+          <div
+            :class="[
+              'textLight--text',
+              $vuetify.breakpoint.smAndDown ? 'network-long-name' : ''
+            ]"
+          >
             {{ network.name_long }}
           </div>
           <v-spacer />
@@ -170,7 +175,17 @@ export default {
           item =>
             item.name === types.ETH.name ||
             item.name === types.BSC.name ||
-            item.name === types.MATIC.name
+            item.name === types.POL.name ||
+            item.name === types.ROOTSTOCK.name ||
+            item.name === types.ETC.name ||
+            item.name === types.XDC.name ||
+            item.name === types.MOONBEAM.name ||
+            item.name === types.MOONRIVER.name ||
+            item.name === types.AURORA.name ||
+            item.name === types.ARB.name ||
+            item.name === types.FTM.name ||
+            item.name === types.OP.name ||
+            item.name === types.COTI.name
         );
       }
       if (this.searchInput && this.searchInput !== '') {
@@ -329,6 +344,8 @@ export default {
               this.setTokenAndEthBalance();
               this.$emit('newNetwork');
             });
+          } else {
+            this.setWeb3Instance();
           }
         })
         .catch(e => {
@@ -379,5 +396,12 @@ $borderNetwork: 1px solid #ececec;
 .mint-me-color {
   filter: brightness(0) saturate(100%) invert(90%) sepia(3%) saturate(5171%)
     hue-rotate(348deg) brightness(92%) contrast(63%);
+}
+
+.network-long-name {
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

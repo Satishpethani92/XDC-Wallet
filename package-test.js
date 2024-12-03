@@ -1,4 +1,4 @@
-// package-test.js: check to make sure that all dependcies are sufficiently up
+// package-test.js: check to make sure that all dependencies are sufficiently up
 // to date. If dependencies are too outdated, exit with an error, failing `npm
 // run update:packages` and thus eventually the entire build.
 
@@ -92,7 +92,16 @@ const EXCEPTIONS = [
   '@commitlint/config-conventional',
   'commitlint',
   'minizlib',
-  'remark-preset-lint-recommended' // breaks
+  'remark-preset-lint-recommended', // breaks
+  '@sentry/browser', // major update
+  '@sentry/vue', // major update
+  'qrcode-with-logos', // fix after release
+  '@ensdomains/ens-contracts',
+  '@shapeshiftoss/hdwallet-core',
+  '@shapeshiftoss/hdwallet-keepkey-webusb',
+  '@trezor/connect-web',
+  '@walletconnect/modal',
+  '@walletconnect/ethereum-provider'
 ];
 const CUSTOM_DIST = {
   ['babel-core']: 'bridge'

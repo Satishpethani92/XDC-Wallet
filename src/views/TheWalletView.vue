@@ -113,7 +113,11 @@ export default {
       'baseGasPrice',
       'darkMode'
     ]),
-    ...mapState('external', ['coinGeckoTokens', 'selectedEIP6963Provider']),
+    ...mapState('external', [
+      'coinGeckoTokens',
+      'selectedEIP6963Provider',
+      'selectedEIP6963Info'
+    ]),
     ...mapState('popups', ['pkSurveyShown', 'pkSurveyShownCounter']),
     ...mapGetters('global', [
       'network',
@@ -151,7 +155,7 @@ export default {
     },
     network(newVal, oldVal) {
       if (this.online && !this.isOfflineApp) {
-        this.web3.eth.clearSubscriptions();
+        // this.web3.eth.clearSubscriptions();
         this.identifier === WALLET_TYPES.WEB3_WALLET
           ? this.setWeb3Instance(this.selectedEIP6963Provider)
           : this.setWeb3Instance();
@@ -251,13 +255,6 @@ export default {
   beforeDestroy() {
     EventBus.$off('openPaperWallet');
     if (this.online && !this.isOfflineApp) this.web3.eth.clearSubscriptions();
-    const provider = this.selectedEIP6963Provider;
-    if (provider && provider.removeListener instanceof Function) {
-      if (this.findAndSetNetwork instanceof Function)
-        provider.removeListener('chainChanged', this.findAndSetNetwork);
-      if (this.setWeb3Account instanceof Function)
-        provider.removeListener('accountsChanged', this.setWeb3Account);
-    }
     clearInterval(this.manualBlockSubscription);
   },
   methods: {
@@ -406,6 +403,7 @@ export default {
         if (this.selectedEIP6963Provider) {
           try {
             if (foundNetwork) {
+              this.web3.eth.clearSubscriptions();
               await this.setNetwork({
                 network: foundNetwork[0],
                 walletType: this.identifier

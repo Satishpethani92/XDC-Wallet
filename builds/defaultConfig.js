@@ -164,6 +164,42 @@ const transpilers = config => {
     .loader('babel-loader')
     .end();
   config.module
+    .rule('web3-name-sdk')
+    .test(/node_modules\/@web3-name-sdk\/.*\.js$/)
+    .use('babel')
+    .loader('babel-loader')
+    .end();
+  config.module
+    .rule('viem')
+    .test(/node_modules\/viem\/.*\.js$/)
+    .use('babel')
+    .loader('babel-loader')
+    .end();
+  config.module
+    .rule('abitype')
+    .test(/node_modules\/abitype\/.*\.js$/)
+    .use('babel')
+    .loader('babel-loader')
+    .end();
+  config.module
+    .rule('libsodium')
+    .test(/node_modules\/libsodium\/.*\.js$/)
+    .use('babel')
+    .loader('babel-loader')
+    .end();
+  config.module
+    .rule('@sinclair')
+    .test(/node_modules\/@sinclair\/.*\.js$/)
+    .use('babel')
+    .loader('babel-loader')
+    .end();
+  config.module
+    .rule('@sinclair-mjs')
+    .test(/node_modules\/@sinclair\/.*\.mjs$/)
+    .use('babel')
+    .loader('babel-loader')
+    .end();
+  config.module
     .rule('resolve-alias')
     .test(/node_modules\/@ledgerhq\/.*\.js$/)
     .resolve.alias.set('@ledgerhq/devices', '@ledgerhq/devices/lib-es')

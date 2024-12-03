@@ -1,8 +1,8 @@
-import { MATIC } from '../types';
+import { AMOY } from '../types';
 export default {
-  type: MATIC,
+  type: AMOY,
   service: 'myetherwallet.com-ws',
-  url: 'wss://nodes.mewapi.io/ws/matic',
+  url: 'wss://nodesmw.mewapi.io/ws/amoy',
   port: 443,
   auth: false,
   username: '',

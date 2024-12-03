@@ -1,8 +1,8 @@
-import { GOERLI } from '../types';
+import { POL } from '../types';
 export default {
-  type: GOERLI,
+  type: POL,
   service: 'myetherwallet.com-ws',
-  url: 'wss://nodes.mewapi.io/ws/goerli',
+  url: 'wss://nodes.mewapi.io/ws/matic',
   port: 443,
   auth: false,
   username: '',

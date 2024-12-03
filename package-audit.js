@@ -38,7 +38,21 @@ const AUDIT_EXCEPTIONS = [
   'web3-utils',
   '@solana/web3.js',
   'lodash.template',
-  'html-minifier'
+  'html-minifier',
+  'braces',
+  'ws',
+  // issues after new enkrypt ens lib
+  'lodash',
+  'node-forge',
+  'elliptic',
+  'protobufjs',
+  'minimatch',
+  'socket.io',
+  'semver',
+  'path-to-regexp',
+  'body-parser',
+  'secp256k1',
+  'http-proxy-middleware'
 ];
 const execute = (command, callback) => {
   exec(

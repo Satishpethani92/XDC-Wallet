@@ -1,5 +1,19 @@
 import nodeList from '@/utils/networks';
-import { ETH, BSC, MATIC } from '@/utils/networks/types';
+import {
+  ETH,
+  BSC,
+  POL,
+  ROOTSTOCK,
+  ETC,
+  XDC,
+  MOONBEAM,
+  MOONRIVER,
+  AURORA,
+  ARB,
+  FTM,
+  OP,
+  COTI
+} from '@/utils/networks/types';
 import {
   getGasBasedOnType,
   getPriorityFeeBasedOnType,
@@ -73,7 +87,21 @@ const hasSwap = function (state, getters, rootState) {
   const device = rootState.wallet.instance?.identifier;
 
   if (device === WALLET_TYPES.COOL_WALLET_S) return false;
-  return name === ETH.name || name === BSC.name || name === MATIC.name;
+  return (
+    name === ETH.name ||
+    name === BSC.name ||
+    name === POL.name ||
+    name === ROOTSTOCK.name ||
+    name === ETC.name ||
+    name === XDC.name ||
+    name === MOONBEAM.name ||
+    name === MOONRIVER.name ||
+    name === AURORA.name ||
+    name === ARB.name ||
+    name === FTM.name ||
+    name === OP.name ||
+    name === COTI.name
+  );
 };
 
 const swapLink = function (state, getters, rootState) {
@@ -96,9 +124,9 @@ const getFiatValue =
    * @param {Boolean} options.doNotLocalize - formats value to currency, no rate
    * @returns - Formatted localized currency
    */
-  (value, options = {}) => {
+  (value, options = { doNotLocalize: true }) => {
     const config = options.doNotLocalize
-      ? { currency: getters.currencyConfig.currency }
+      ? { currency: 'USD' } // hard code currency for now
       : getters.currencyConfig;
     return formatFiatValue(value, config).value;
   };

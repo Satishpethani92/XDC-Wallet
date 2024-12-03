@@ -92,6 +92,13 @@
             <span class="textDark--text">{{ getChecksumAddressString }}</span>
           </mew-tooltip>
         </div>
+        <div>
+          <a :href="blockExplorer" target="_blank">
+            <v-icon small color="white" class="cursor--pointer"
+              >mdi-open-in-new</v-icon
+            >
+          </a>
+        </div>
       </div>
       <!--
       =====================================================================================
@@ -261,7 +268,7 @@ import { formatFloatingPointValue } from '@/core/helpers/numberFormatHelper';
 
 import wallets from './handlers/config';
 import WALLET_TYPES from '../access-wallet/common/walletTypes';
-import NameResolver from '@/modules/name-resolver/index';
+import Resolver from '@/modules/name-resolver/index';
 import { EventBus } from '@/core/plugins/eventBus';
 import handlerAnalytics from '@/modules/analytics-opt-in/handlers/handlerAnalytics.mixin';
 import { DASHBOARD } from '../analytics-opt-in/handlers/configs/events';
@@ -304,6 +311,12 @@ export default {
     ...mapGetters('global', ['network', 'isTestNetwork', 'getFiatValue']),
     ...mapGetters('wallet', ['tokensList', 'balanceInETH']),
     ...mapState('wallet', ['web3']),
+    blockExplorer() {
+      return this.network.type.blockExplorerAddr.replace(
+        '[[address]]',
+        this.address
+      );
+    },
     /**
      * verifies whether instance exists before giving path
      */
@@ -462,8 +475,8 @@ export default {
      * and creates a new name resolver instance
      */
     async setupNameResolver() {
-      if (this.network.type.ens && this.web3.currentProvider) {
-        this.nameResolver = new NameResolver(this.network, this.web3);
+      if (this.network.type.ensEnkryptType) {
+        this.nameResolver = new Resolver(this.network);
       } else {
         this.nameResolver = null;
       }
