@@ -99,9 +99,18 @@ const EXCEPTIONS = [
   '@ensdomains/ens-contracts',
   '@shapeshiftoss/hdwallet-core',
   '@shapeshiftoss/hdwallet-keepkey-webusb',
-  '@trezor/connect-web',
   '@walletconnect/modal',
-  '@walletconnect/ethereum-provider'
+  '@walletconnect/ethereum-provider',
+  'viem',
+  'animejs',
+  '@actions/github',
+  '@coolwallet/bsc',
+  '@coolwallet/core',
+  '@coolwallet/eth',
+  'lottie-web',
+  'moment-timezone',
+  'babel-jest',
+  'protobufjs'
 ];
 const CUSTOM_DIST = {
   ['babel-core']: 'bridge'

@@ -14,7 +14,7 @@ import arb from './arb-mew-ws';
 import sepolia from './sepolia-mew-ws';
 import fantom from './fantom-ws';
 import gnosis from './gnosis-ws';
-import klaytn from './klaytn-ws';
+import kaia from './kaia-ws';
 import opmew from './op-mew-ws';
 import arthera from './arthera-ws';
 import artheratest from './arthera-test-ws';
@@ -24,11 +24,13 @@ import amoyws from './amoy-mew-ws';
 import cotiws from './coti-ws';
 import xlayer from './xlayer-okx-ws';
 import xlayertestws from './xlayer-okx-testnet-ws';
+import base from './base-mew-ws';
 
 export {
   xdcnetwork,
   txdcnetwork,
   etcethereumclassiccooperativeparityws,
+  base,
   ethmewws,
   cotiws,
   holeskymewws,
@@ -44,7 +46,7 @@ export {
   sepolia,
   fantom,
   gnosis,
-  klaytn,
+  kaia,
   opmew,
   arthera,
   artheratest,

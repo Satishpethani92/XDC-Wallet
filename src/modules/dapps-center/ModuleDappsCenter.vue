@@ -20,7 +20,7 @@
               <mew-button
                 color-theme="buttonGrayLight"
                 btn-style="light"
-                style="height: 173px"
+                style="height: 185px"
                 class="d-flex align-start pt-7"
                 has-full-width
                 @click.native="routeTo(dappName(dapp))"
@@ -30,7 +30,7 @@
                   :class="
                     dapp.style === 'outline' ? 'white--text' : 'textDark--text'
                   "
-                  style="width: 100%"
+                  style="width: 100%; text-wrap: initial"
                 >
                   <img
                     :src="
@@ -90,6 +90,9 @@
         </template>
       </the-wrapper-dapp>
     </template>
+    <template #rightColItem1>
+      <module-trending-tokens />
+    </template>
   </the-wrapper-wallet>
 </template>
 
@@ -104,7 +107,9 @@ import isNew from '@/core/helpers/isNew.js';
 export default {
   components: {
     TheWrapperDapp: () => import('@/dapps/TheWrapperDapp.vue'),
-    TheWrapperWallet: () => import('@/views/components-wallet/TheWrapperWallet')
+    TheWrapperWallet: () =>
+      import('@/views/components-wallet/TheWrapperWallet'),
+    ModuleTrendingTokens: () => import('@/modules/swap/ModuleTrendingTokens')
   },
   mixins: [handlerAnalytics],
   data() {

@@ -60,8 +60,8 @@ module.exports = [
   'wss://mainnet.aurora.dev:443',
   'wss://api.avax.network:443/ext/bc/C/ws',
   'wss://rpc.gnosischain.com:443/wss',
-  'wss://public-en-cypress.klaytn.net:443/ws',
-  'wss://wsapi.fantom.network:443/',
+  'wss://public-en.node.kaia.io:443/ws',
+  'wss://fantom-rpc.publicnode.com:443/',
   'wss://ws.arthera.net:443/',
   'wss://ws-test.arthera.net:443/',
   'wss://devnet.coti.io:443/ws',
@@ -85,12 +85,18 @@ module.exports = [
   'https://cdn.live.ledger.com:443',
   'https://registry.walletconnect.org:443/data/wallets.json',
   'https://registry.walletconnect.com:433/api/v2/wallets',
+  'https://pulse.walletconnect.com:443',
   'wss://*.bridge.walletconnect.org:443',
   'https://buy-staging.moonpay.com:443',
+  'https://eth.blockrazor.xyz:443',
+  'https://rpc.ankr.com:443',
   // Dapps
   'https://public-node.rsk.co', // Rootstock
   'https://eiqxqk2yzamq64zayk7zjsz6rq0hywyn.lambda-url.us-east-1.on.aws/', // Flyover
   'https://lps.flyover.rif.technology', // Flyover
+  'https://rootstock-testnet.blockscout.com', // For Rootstock collective dapp
+  'https://rootstock.blockscout.com', // For Rootstock collective dapp
+  'https://api.coingecko.com', // For Rootstock collective dapp
   'https://staked.mewapi.io:443', // staked
   'https://stakedtest.mewapi.io:443', // staked
   'https://ethblocksapi.mewapi.io:443', // Eth Blocks
@@ -114,6 +120,9 @@ module.exports = [
   'https://metadata.unstoppabledomains.com:443', // Unstoppable domains
   'wss://relay.walletconnect.com:443', // walletconnect2
   'https://explorer-api.walletconnect.com:443', // web3modal
-  'https://rpc.ankr.com:443',
-  'https://cloudflare-eth.com:443'
+  'https://spaceapi.prd.space.id:443',
+  'https://cloudflare-eth.com:443',
+  //TRENDING TOKENS
+  'https://raw.githubusercontent.com:443/enkryptcom/dynamic-data/main/swaplists/top-tokens.json',
+  'https://api.coingecko.com:443'
 ];

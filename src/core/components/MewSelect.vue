@@ -104,12 +104,12 @@
         <span
           :class="noCapitalize ? '' : 'text-capitalize'"
           class="mt-1 ml-2 basic--text"
-          >{{ item.name ? item.name : item }}
+          >{{ item.name ? item.name : item | concatStr }}
           <span
             v-if="item.subtext"
             :class="noCapitalize ? '' : 'text-capitalize'"
             class="searchText--text"
-            >- {{ item.subtext }}</span
+            >- {{ item.subtext | concatSym }}</span
           ></span
         >
       </div>
@@ -133,12 +133,12 @@
         class="d-flex align-center justify-center"
       >
         <span :class="noCapitalize ? '' : 'text-capitalize'" class="ml-2 mt-1"
-          >{{ data.item.name ? data.item.name : data.item }}
+          >{{ data.item.name ? data.item.name : data.item | concatStr }}
           <span
             v-if="data.item.subtext"
             :class="noCapitalize ? '' : 'text-capitalize'"
             class="textSecondary--text"
-            >- {{ data.item.subtext }}</span
+            >- {{ data.item.subtext | concatSym }}</span
           ></span
         >
       </div>
@@ -170,7 +170,18 @@
           v-if="data.item.name"
           class="d-flex align-center justify-space-between full-width"
         >
-          <div v-if="!loading" class="d-flex align-center">
+          <div
+            v-if="!loading"
+            class="d-flex align-center"
+            style="position: relative"
+          >
+            <div
+              v-if="showBridgeTag && data.item.isEth === false"
+              class="bridge-tag"
+            >
+              Bridge
+            </div>
+
             <mew-token-container
               v-if="!normalDropdown"
               class="mr-1"
@@ -216,6 +227,20 @@ import { debounce } from 'lodash';
 
 export default {
   name: 'MewSelect',
+  filters: {
+    concatStr(val) {
+      const newVal = `${val}`;
+      // should probably be moved globablly
+      if (newVal.length < 15) return newVal;
+      return `${newVal.substr(0, 7)}...`;
+    },
+    concatSym(val) {
+      const newVal = `${val}`;
+      // should probably be moved globablly
+      if (newVal.length < 8) return newVal;
+      return `${newVal.substr(0, 7)}...`;
+    }
+  },
   components: {
     MewTokenContainer
   },
@@ -309,6 +334,10 @@ export default {
      * Remove Capitalize style from all forms
      */
     noCapitalize: {
+      type: Boolean,
+      default: false
+    },
+    showBridgeTag: {
       type: Boolean,
       default: false
     }
@@ -509,5 +538,19 @@ export default {
 .v-subheader.theme--dark {
   background-color: var(--v-inputPrimary-base) !important;
   border: 0 !important;
+}
+.bridge-tag {
+  position: absolute;
+  top: 0px;
+  left: -16px;
+  background-color: var(--v-bluePrimary-base);
+  color: white;
+  padding-left: 3px;
+  padding-right: 8px;
+  text-transform: uppercase;
+  font-size: 8px;
+  font-weight: 700;
+  border-bottom-right-radius: 12px;
+  letter-spacing: 1px;
 }
 </style>

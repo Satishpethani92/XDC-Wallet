@@ -3,7 +3,7 @@ import BSC from './BSC.js';
 import SEPOLIA from './SEPOLIA';
 import GO from './GO.js';
 import MINTME from './MINTME';
-import KLAY from './KLAY';
+import KAIA from './KAIA.js';
 import AA from './AA';
 import AAT from './AAT';
 import ROOTSTOCKTESTNET from './ROOTSTOCKTESTNET.js';
@@ -13,6 +13,7 @@ import XLAYERTESTNET from './XLAYER-TESTNET.js';
 
 import ETH from './ETH.js';
 import ETC from './ETC.js';
+import BASE from './BASE.js';
 import XDC from './XDC';
 import MOONBEAM from './MOONBEAM';
 import MOONRIVER from './MOONRIVER';
@@ -34,6 +35,7 @@ export {
   COTI,
   ETC,
   BSC,
+  BASE,
   POL,
   GO,
   MINTME,
@@ -45,7 +47,7 @@ export {
   SEPOLIA,
   FTM,
   GNO,
-  KLAY,
+  KAIA,
   OP,
   AA,
   AAT,

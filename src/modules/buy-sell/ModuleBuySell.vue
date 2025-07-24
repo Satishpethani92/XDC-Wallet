@@ -57,15 +57,20 @@
                   <div class="font-weight-medium textDark--text mr-1">
                     You will get
                   </div>
-                  <mew-tooltip v-if="!loading" style="height: 21px">
+                  <mew-tooltip
+                    v-if="!loading && fetchError === ''"
+                    style="height: 21px"
+                  >
                     <template #contentSlot>
                       <div>
                         Includes 4.75% fee (First transaction is free).
                         <br />
                         <br />
-                        {{ networkFeeText }}
-                        <br />
-                        <br />
+                        <div v-if="networkFeeText !== ''">
+                          {{ networkFeeText }}
+                          <br />
+                          <br />
+                        </div>
                         {{ dailyLimit }}
                         <br />
                         {{ monthlyLimit }}
@@ -153,7 +158,7 @@ import { isEmpty } from 'lodash';
 import BigNumber from 'bignumber.js';
 import { sha3 } from 'web3-utils';
 
-import { ETH, OP, ARB, POL } from '@/utils/networks/types';
+import { ETH, OP, ARB, POL, BSC } from '@/utils/networks/types';
 import { MAIN_TOKEN_ADDRESS } from '@/core/helpers/common';
 
 import { formatFiatValue } from '@/core/helpers/numberFormatHelper';
@@ -232,12 +237,16 @@ export default {
       }`;
     },
     networkFeeText() {
+      const firstWithFee = this.buyQuote.filter(
+        quote => quote.fiat_fees !== '0.00'
+      );
+      if (firstWithFee.length === 0) return '';
       return `${
         this.network.type.name
       } network fee (for transfers to your wallet) ~${BigNumber(
-        this.buyQuote[0]?.fiat_fees || 0
+        firstWithFee[0]?.fiat_fees || 0
       )
-        .div(this.buyQuote[0]?.crypto_price || 0)
+        .div(firstWithFee[0]?.crypto_price || 0)
         .toString()} ${this.network.type.name}`;
     },
     cryptoToFiat() {
@@ -376,7 +385,11 @@ export default {
       this.buyQuote = [];
       const id = sha3(this.address)?.substring(0, 42);
       const network =
-        this.network.type.name === 'Polygon' ? 'POL' : this.network.type.name;
+        this.network.type.name === POL.name
+          ? 'POL'
+          : this.network.type.name === BSC.name
+          ? 'BSC'
+          : this.network.type.name;
       this.isFetching = true; // prevent multiple requests
       const data = await fetch(
         `https://mainnet.mewwallet.dev/v5/purchase/buy?id=${id}&address=${this.address}&fiatCurrency=${this.selectedFiat.name}&amount=${this.amount}&cryptoCurrency=${this.selectedCurrency.symbol}&chain=${network}&iso=US`
@@ -410,7 +423,8 @@ export default {
             asset.chain === ETH.name ||
             asset.chain === 'POL' ||
             asset.chain === OP.name ||
-            asset.chain === ARB.name
+            asset.chain === ARB.name ||
+            asset.chain === 'BSC'
         )
         .map(chain => {
           const assets = chain.assets.map(asset => {
@@ -434,6 +448,8 @@ export default {
               ? OP
               : chain.chain === ARB.name
               ? ARB
+              : chain.chain === 'BSC'
+              ? BSC
               : ETH;
           return Object.assign({}, chain, matchedChain, {
             img: matchedChain.icon,

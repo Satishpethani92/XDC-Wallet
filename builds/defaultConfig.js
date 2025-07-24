@@ -25,7 +25,7 @@ const webpackConfig = {
       'Strict-Transport-Security':
         'max-age=63072000; includeSubdomains; preload',
       'Content-Security-Policy':
-        "font-src 'self' data: js.intercomcdn.com:443 fonts.intercomcdn.com:443 fonts.gstatic.com:443; media-src js.intercomcdn.com:443 'self'; default-src 'self' blob:; frame-src 'self' request-global.czilladx.com:443 verify.walletconnect.com:443 verify.walletconnect.org:443 www.walletlink.org:443 connect.trezor.io:443 intercom-sheets.com:443 www.google.com:443; img-src 'self' downloads.intercomcdn.com:443 www.mewtopia.com:443 gifs.intercomcdn.com:443 js.intercomcdn.com:443 images.ctfassets.net static.intercomassets.com:443 nft.mewapi.io:443 mewcard.mewapi.io:443 img.mewapi.io:443 app.lokalise.com:443 explorer-api.walletconnect.com:443 data: blob: ; script-src 'unsafe-eval' 'unsafe-inline' blob: https:; style-src 'self' 'unsafe-inline' https:; object-src 'none'; connect-src " +
+        "font-src 'self' data: js.intercomcdn.com:443 fonts.intercomcdn.com:443 fonts.gstatic.com:443; media-src js.intercomcdn.com:443 'self'; default-src 'self' blob:; frame-src 'self' request-global.czilladx.com:443 verify.walletconnect.com:443 verify.walletconnect.org:443 www.walletlink.org:443 connect.trezor.io:443 intercom-sheets.com:443 www.google.com:443; img-src 'self' downloads.intercomcdn.com:443 www.mewtopia.com:443 gifs.intercomcdn.com:443 js.intercomcdn.com:443 images.ctfassets.net static.intercomassets.com:443 nft.mewapi.io:443 mewcard.mewapi.io:443 img.mewapi.io:443 app.lokalise.com:443 explorer-api.walletconnect.com:443 cloud-img-cdn.com:443/static/220827d2/spacer.gif data: blob: ; script-src 'unsafe-eval' 'unsafe-inline' blob: https:; style-src 'self' 'unsafe-inline' https:; object-src 'none'; connect-src " +
         allowedConnections.join(' ') +
         ';',
       'X-Content-Type-Options': 'nosniff',
@@ -37,6 +37,7 @@ const webpackConfig = {
   plugins: [
     new webpack.SourceMapDevToolPlugin(sourceMapsConfig),
     new webpack.NormalModuleReplacementPlugin(/^any-promise$/, 'bluebird'),
+    new webpack.NormalModuleReplacementPlugin(/^\@sinclair\/typebox$/, '@sinclair/typebox/build/cjs'),
     // new BundleAnalyzerPlugin(),
     new ImageminPlugin({
       disable: process.env.NODE_ENV !== 'production',
@@ -188,14 +189,14 @@ const transpilers = config => {
     .loader('babel-loader')
     .end();
   config.module
-    .rule('@sinclair')
+    .rule('sinclair')
     .test(/node_modules\/@sinclair\/.*\.js$/)
     .use('babel')
     .loader('babel-loader')
     .end();
   config.module
-    .rule('@sinclair-mjs')
-    .test(/node_modules\/@sinclair\/.*\.mjs$/)
+    .rule('trezor-web')
+    .test(/node_modules\/@trezor\/.*\.js$/)
     .use('babel')
     .loader('babel-loader')
     .end();
