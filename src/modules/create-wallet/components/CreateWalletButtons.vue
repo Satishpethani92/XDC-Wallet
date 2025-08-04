@@ -72,9 +72,7 @@ import { mapState } from 'vuex';
 import { Toast, ERROR } from '@/modules/toast/handler/handlerToast';
 import enkryptMarketing from '@/core/mixins/enkryptMarketing.mixin';
 import handlerAnalytics from '@/modules/analytics-opt-in/handlers/handlerAnalytics.mixin';
-import {
-  CREATE_WALLET
-} from '@/modules/analytics-opt-in/handlers/configs/events.js';
+import { CREATE_WALLET } from '@/modules/analytics-opt-in/handlers/configs/events.js';
 import { ROUTES_HOME } from '@/core/configs/configRoutes';
 
 export default {
