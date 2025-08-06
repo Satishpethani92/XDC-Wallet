@@ -15,7 +15,11 @@ const finalConfig = {
     'web-vitals',
     '@amplitude/plugin-web-vitals-browser',
     '@ensdomains/address-encoder',
-    '@enkryptcom/name-resolution'
+    '@enkryptcom/name-resolution',
+    '@ledgerhq/hw-app-eth',
+    '@ledgerhq/hw-transport-web-ble',
+    '@ledgerhq/hw-transport-webusb',
+    '@ledgerhq/live-common'
   ]
 };
 
