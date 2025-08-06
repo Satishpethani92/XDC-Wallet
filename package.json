@@ -61,7 +61,7 @@
     "@mathieustan/vue-intercom": "0.0.9",
     "@myetherwallet/eth2-keystore": "0.3.1",
     "@sentry/browser": "7.109.0",
-    "@sentry/tracing": "7.120.3",
+    "@sentry/tracing": "7.120.4",
     "@sentry/vue": "7.109.0",
     "@shapeshiftoss/hdwallet-core": "1.54.1",
     "@shapeshiftoss/hdwallet-keepkey-webusb": "1.54.1",
