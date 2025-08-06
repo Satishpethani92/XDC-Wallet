@@ -12,13 +12,12 @@ if (process.env.BUILD === 'offline') {
 const finalConfig = {
   ...baseConfig, // This includes all settings from your live/offline config
   transpileDependencies: [
-    // Previous entries
     'web-vitals',
     '@amplitude/plugin-web-vitals-browser',
-
-    // Add the new packages here
     '@ensdomains/address-encoder',
-    '@enkryptcom/name-resolution'
+    '@enkryptcom/name-resolution',
+    '@ledgerhq/cryptoassets/data/eip712',
+    '@ledgerhq/cryptoassets/data/evm/index'
   ]
 };
 
