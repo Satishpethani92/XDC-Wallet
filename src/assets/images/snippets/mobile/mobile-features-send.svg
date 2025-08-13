@@ -34,10 +34,10 @@
                                     </text>
                                 </g>
                             </g>
-                            <text id="ETH---Ethereum" font-family="SFProText-Regular, SF Pro Text" font-size="14" font-weight="normal">
+                            <text id="ETH---XDC" font-family="SFProText-Regular, SF Pro Text" font-size="14" font-weight="normal">
                                 <tspan x="0.227617856" y="13" fill="#0B2840">ETH</tspan>
                                 <tspan x="27.8311335" y="13" fill="#999999"> </tspan>
-                                <tspan x="31.7823054" y="13" fill="#96A8B6">- Ethereum</tspan>
+                                <tspan x="31.7823054" y="13" fill="#96A8B6">- XDC</tspan>
                             </text>
                         </g>
                     </g>
@@ -98,7 +98,7 @@
                     </text>
                 </g>
                 <text id="MEW-puts-the-Ethereu" font-family="SFProText-Regular, SF Pro Text" font-size="14" font-weight="normal" line-spacing="20" fill="#334758">
-                    <tspan x="39" y="73">MEW puts the Ethereum Blockchain at </tspan>
+                    <tspan x="39" y="73">MEW puts the XDC Blockchain at </tspan>
                     <tspan x="39" y="93">your fingertips, and use MEW to send the </tspan>
                     <tspan x="39" y="113">transaction in a simple way.</tspan>
                 </text>

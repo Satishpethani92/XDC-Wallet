@@ -90,9 +90,9 @@
         </template>
       </the-wrapper-dapp>
     </template>
-    <template #rightColItem1>
+    <!-- <template #rightColItem1>
       <module-trending-tokens />
-    </template>
+    </template> -->
   </the-wrapper-wallet>
 </template>
 

@@ -6,12 +6,12 @@
     <template #leftColItem1>
       <module-contract-deploy />
     </template>
-    <template #rightColItem1>
+    <!-- <template #rightColItem1>
       <module-trending-tokens />
-    </template>
-    <template v-if="isEthNetwork" #rightColItem2>
+    </template> -->
+    <!-- <template v-if="isEthNetwork" #rightColItem2>
       <module-swap-rates />
-    </template>
+    </template> -->
   </the-wrapper-wallet>
 </template>
 

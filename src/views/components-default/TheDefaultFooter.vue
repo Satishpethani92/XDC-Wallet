@@ -4,156 +4,87 @@
       <div class="row">
         <div class="col-3">
           <div class="footer__links">
-            <a href="https://www.myetherwallet.com/about" @click="trackAboutUs"
-              >About us</a
-            >
-            <a
-              href="https://www.myetherwallet.com/careers"
-              @click="trackCareers"
-              >Careers</a
-            >
-            <a
-              href="https://www.myetherwallet.com/how-it-works"
-              @click="trackHowItWorks"
-              >How it works</a
-            >
-            <a href="https://www.myetherwallet.com/team" @click="trackTeam"
-              >Team</a
-            >
-            <a
-              href="https://www.myetherwallet.com/advertise-with-us"
-              @click="trackAdvertiseWithUs"
-              >Advertise With Us</a
-            >
-          </div>
-
-          <div class="footer__links">
-            <a
-              href="https://www.myetherwallet.com/privacy-policy"
-              @click="trackPrivacy"
-              >Privacy</a
-            >
-            <a
-              href="https://www.myetherwallet.com/terms-of-service"
-              @click="trackTerms"
-              >Terms</a
-            >
-            <a
-              href="https://hackenproof.com/myetherwallet/myetherwallet"
-              target="_blank"
-              @click="trackBugBounty"
-              >Bug Bounty</a
-            >
-          </div>
-        </div>
-        <div class="col-3">
-          <div class="footer__links">
-            <a
-              href="https://www.mewwallet.com/"
-              target="_blank"
-              @click="trackMobile"
-              >MEW Mobile App</a
-            >
-            <a
-              href="https://www.enkrypt.com/"
-              target="_blank"
-              @click="trackEnkrypt"
-              >Enkrypt</a
-            >
-            <a
-              href="https://www.myetherwallet.com/wallet/access"
-              target="_blank"
-              @click="trackPortfolio"
-              >MEW Portfolio Manager</a
-            >
-            <a href="https://www.ethvm.com/" target="_blank" @click="trackEthvm"
-              >ethVM</a
-            >
-          </div>
-
-          <div class="footer__links">
-            <a
-              href="https://www.myetherwallet.com/blog"
-              target="_blank"
-              @click="trackMewtopia"
-              >Blog</a
-            >
-
-            <a
-              href="https://www.myetherwallet.com/presskit"
-              @click="trackPressKit"
-              >Press Kit</a
-            >
-          </div>
-        </div>
-        <div class="col-3">
-          <div class="footer__links">
-            <a
-              href="https://help.myetherwallet.com/en/"
-              target="_blank"
-              @click="trackHelpCenter"
-              >Help Center</a
-            >
-            <a
-              href="mailto:support@myetherwallet.com"
-              rel="noopener noreferrer"
-              target="_blank"
-              @click="trackCustomerSupport"
-              >Customer Support</a
-            >
-            <a
-              href="https://www.myetherwallet.com/security-policy"
-              @click="trackSecurityPolicy"
-              >Security Policy</a
-            >
-            <a
-              href="https://www.myetherwallet.com/tools?tool=verify"
-              @click="trackVerifyMessage"
-              >Verify Message</a
-            >
-            <a
-              href="https://www.myetherwallet.com/tools?tool=convert"
-              @click="trackConvertUnits"
-              >Convert Units</a
-            >
-            <a
-              href="https://www.myetherwallet.com/tools?tool=offline"
-              @click="trackSendOfflineHelper"
-              >Send Offline Helper</a
-            >
-          </div>
-        </div>
-        <div class="col-3">
-          <div class="footer__info">
-            <p>
-              Help us keep MEW free and open-source, your donations go a long
-              way towards making that possible.
-            </p>
-            <a
-              href="https://www.ethvm.com/address/0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D"
-              target="_blank"
-              class="footer__info-donation"
-              @click="trackEthDonation"
-            >
-              <donate-eth />
-              Ethereum Donation
+            <h2 class="mt-0">Community</h2>
+            <a href="https://xinfin.org/developers-ecosystem-partners">
+              Developers Ecosystem Partners
             </a>
-            <a
-              href="https://www.blockchain.com/explorer/addresses/btc/1DECAF2uSpFTP4L1fAHR8GCLrPqdwdLse9"
-              target="_blank"
-              class="footer__info-donation"
-              @click="trackBtcDonation"
-            >
-              <donate-btc />
-              Bitcoin Donation
+            <a href="https://xinfin.org/join-community"> Join Community </a>
+            <a href="https://xinfin.org/community-bounty"> Community Bounty </a>
+            <a href="https://forum.xinfin.org/"> XDC Forum </a>
+            <a href="https://docs.xdc.network/media/articles/"> Media </a>
+            <a href="https://xinfin.org/events"> Events </a>
+          </div>
+
+          <div class="footer__links">
+            <h2 class="mt-0">Learn</h2>
+            <a href="https://xinfin.org/about"> About Us </a>
+            <a href="https://xinfin.org/xdpos"> XDC 2.0 </a>
+            <a href="https://xinfin.org/docs/whitepaper-tech.pdf">
+              Technical White Paper
             </a>
+            <a href="https://github.com/XinFinOrg/Open-Hackathon">
+              Online Hackathon
+            </a>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="footer__links">
+            <h2 class="mt-0">Tools</h2>
+            <a href="https://xdcscan.com/"> XDC Explorer </a>
+            <a href="https://stats1.xinfin.network/"> XDC Network Status </a>
+            <a href="https://faucet.apothem.network/"> XDC Faucet </a>
+            <a href="https://remix.xinfin.network/"> XDC Network Remix </a>
+            <a href="https://xinfin.org/quick-tools-guide">
+              Quick Tools Guide
+            </a>
+            <a href="https://xinfin.org/blockchain-analytics-tools">
+              Blockchain Analytics Tools
+            </a>
+          </div>
+
+          <div class="footer__links">
+            <h2 class="mt-0">Developers</h2>
+            <a href="https://docs.xdc.network/">Documentation</a>
+            <a href="https://xdc.dev/">XDC Developers Forum</a>
+            <a href="https://coderun.ai/">XDC AI Developer Tools</a>
+            <a href="https://github.com/XinFinorg">GitHub</a>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="footer__links">
+            <h2 class="mt-0">Use XDC</h2>
+            <a href="https://xinfin.org/ecosystem-dapps"> Ecosystem dApps </a>
+            <a href="https://xinfin.org/setup-masternode"> Setup Masternode </a>
+            <a href="https://xinfin.org/get-xdc"> Get XDC </a>
+            <a href="https://xinfin.org/wallets"> XDC Wallets </a>
+            <a href="https://xinfin.org/xdc-subnet"> XDC Subnet </a>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="footer__links">
+            <h2 class="mt-0">Other Links</h2>
+            <a href="https://xinfin.org/contact"> Contact Us </a>
+            <a href="https://xinfin.org/xdc-accelerator-program">
+              Join Accelerator
+            </a>
+            <a href="https://xinfin.org/exchange-listing-resource">
+              Exchange Listing Resource
+            </a>
+            <a href="https://xinfin.org/custody-services-integration">
+              Custody Services Integration
+            </a>
+            <a href="https://xinfin.org/brand-assets"> Brand Assets </a>
+            <a href="https://xinfin.org/risk-warning-disclaimer">
+              Risk Warning Disclaimer
+            </a>
+            <a href="https://docs.xdc.network/"> FAQs </a>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-6">
           <div class="footer__copyright">
-            <p>© {{ year }} MyEtherWallet. All rights reserved.</p>
+            <p>© {{ year }} XDCWallet. All rights reserved.</p>
             <p>
               Pricing taken from
               <a
@@ -179,7 +110,7 @@
             <h5>Join XDC Community</h5>
             <div class="footer__social-links">
               <a
-                href="https://www.facebook.com/MyEtherWallet"
+                href="https://www.facebook.com/XDCNetworkBlockchain"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('facebook')"
@@ -187,7 +118,7 @@
                 <facebook />
               </a>
               <a
-                href="https://twitter.com/myetherwallet/"
+                href="https://x.com/XDC_Network_"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('twitter')"
@@ -195,7 +126,7 @@
                 <twitter />
               </a>
               <a
-                href="https://www.instagram.com/myetherwallet/"
+                href="https://www.instagram.com/xdc_network_/?hl=en"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('instagram')"
@@ -203,7 +134,7 @@
                 <instagram />
               </a>
               <a
-                href="https://www.linkedin.com/company/myetherwallet/"
+                href="https://www.linkedin.com/company/xdcnetwork/"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('linkedin')"
@@ -211,7 +142,7 @@
                 <linkedin />
               </a>
               <a
-                href="https://github.com/myetherwallet"
+                href="https://github.com/XinFinorg"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('github')"
@@ -219,7 +150,7 @@
                 <github />
               </a>
               <a
-                href="https://www.reddit.com/r/MyEtherWallet/"
+                href="https://www.reddit.com/r/xinfin/"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('reddit')"
@@ -227,7 +158,7 @@
                 <reddit />
               </a>
               <a
-                href="https://medium.com/@myetherwallet"
+                href="https://medium.com/xdcnetwork"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('medium')"
@@ -235,7 +166,7 @@
                 <medium />
               </a>
               <a
-                href="https://t.me/myetherwallet"
+                href="https://t.me/XDC_Network_Updates"
                 target="_blank"
                 class="footer__social-link"
                 @click="trackJoinMewCommunity('telegram')"
@@ -331,116 +262,6 @@ export default {
     }
   },
   methods: {
-    trackAboutUs() {
-      this.$amplitude.track(FOOTER_EVENTS.footerAboutUs, {
-        network: this.network.type.name
-      });
-    },
-    trackCareers() {
-      this.$amplitude.track(FOOTER_EVENTS.footerCareers, {
-        network: this.network.type.name
-      });
-    },
-    trackHowItWorks() {
-      this.$amplitude.track(FOOTER_EVENTS.footerHowItWorks, {
-        network: this.network.type.name
-      });
-    },
-    trackTeam() {
-      this.$amplitude.track(FOOTER_EVENTS.footerTeam, {
-        network: this.network.type.name
-      });
-    },
-    trackAdvertiseWithUs() {
-      this.$amplitude.track(FOOTER_EVENTS.footerAdvertiseWithUs, {
-        network: this.network.type.name
-      });
-    },
-    trackPrivacy() {
-      this.$amplitude.track(FOOTER_EVENTS.footerPrivacy, {
-        network: this.network.type.name
-      });
-    },
-    trackTerms() {
-      this.$amplitude.track(FOOTER_EVENTS.footerTerms, {
-        network: this.network.type.name
-      });
-    },
-    trackBugBounty() {
-      this.$amplitude.track(FOOTER_EVENTS.footerBugBounty, {
-        network: this.network.type.name
-      });
-    },
-    trackMobile() {
-      this.$amplitude.track(FOOTER_EVENTS.footerMobile, {
-        network: this.network.type.name
-      });
-    },
-    trackEnkrypt() {
-      this.$amplitude.track(FOOTER_EVENTS.footerEnkrypt, {
-        network: this.network.type.name
-      });
-    },
-    trackPortfolio() {
-      this.$amplitude.track(FOOTER_EVENTS.footerPortfolio, {
-        network: this.network.type.name
-      });
-    },
-    trackEthvm() {
-      this.$amplitude.track(FOOTER_EVENTS.footerEthvm, {
-        network: this.network.type.name
-      });
-    },
-    trackMewtopia() {
-      this.$amplitude.track(FOOTER_EVENTS.footerMewtopia, {
-        network: this.network.type.name
-      });
-    },
-    trackPressKit() {
-      this.$amplitude.track(FOOTER_EVENTS.footerPressKit, {
-        network: this.network.type.name
-      });
-    },
-    trackHelpCenter() {
-      this.$amplitude.track(FOOTER_EVENTS.footerHelpCenter, {
-        network: this.network.type.name
-      });
-    },
-    trackCustomerSupport() {
-      this.$amplitude.track(FOOTER_EVENTS.footerCustomerSupport, {
-        network: this.network.type.name
-      });
-    },
-    trackSecurityPolicy() {
-      this.$amplitude.track(FOOTER_EVENTS.footerSecurityPolicy, {
-        network: this.network.type.name
-      });
-    },
-    trackVerifyMessage() {
-      this.$amplitude.track(FOOTER_EVENTS.footerVerifyMessage, {
-        network: this.network.type.name
-      });
-    },
-    trackConvertUnits() {
-      this.$amplitude.track(FOOTER_EVENTS.footerConvertUnits, {
-        network: this.network.type.name
-      });
-    },
-    trackSendOfflineHelper() {
-      this.$amplitude.track(FOOTER_EVENTS.footerSendOfflineHelper, {
-        network: this.network.type.name
-      });
-    },
-    trackEthDonation() {
-      this.$amplitude.track(FOOTER_EVENTS.footerEthDonation, {
-        network: this.network.type.name
-      });
-    },
-    trackBtcDonation() {
-      this.$amplitude.track(FOOTER_EVENTS.footerBtcDonation, {
-        network: this.network.type.name
-      });
-    },
     trackCoinGecko() {
       this.$amplitude.track(FOOTER_EVENTS.footerCoinGecko, {
         network: this.network.type.name

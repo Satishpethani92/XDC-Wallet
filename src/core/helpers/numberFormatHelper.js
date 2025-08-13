@@ -491,7 +491,7 @@ const convertToQuadrillion = value => {
  * Helper function. Rounds a value to specified decimal points and tooltip with full value if > more decimal points then round
  * @param {BigNumber} value - number to convert takes BigNumber || string || number
  * @param {number} round - how many decimal points to round the number
- * @param {boolean} hasTrailingZeros - set this to true, if you want to dispaly trailing zeros ie: desired result 12.3000 instead of 12.3
+ * @param {boolean} hasTrailingZeros - set this to true, if you want to dispaly trailing zeros ie: desired result 12.8000 instead of 12.3
  * @return {object} - FormatterNumber
  */
 const getRoundNumber = (value, round, hasTrailingZeros = false) => {

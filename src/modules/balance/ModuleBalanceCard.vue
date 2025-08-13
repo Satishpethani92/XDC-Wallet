@@ -38,13 +38,13 @@
                 <v-icon color="textDark" class="mr-3">mdi-refresh</v-icon>
                 <v-list-item-title> Refresh Balance</v-list-item-title>
               </v-list-item>
-              <v-list-item
+              <!-- <v-list-item
                 class="cursor-pointer openThePaperWallet"
                 @click="openPaperWallet"
               >
                 <v-icon color="textDark" class="mr-3">mdi-printer</v-icon>
                 <v-list-item-title>View paper wallet</v-list-item-title>
-              </v-list-item>
+              </v-list-item> -->
               <v-list-item
                 v-if="isHardware && canDisplayAddress"
                 class="cursor-pointer"
@@ -269,7 +269,7 @@ import { formatFloatingPointValue } from '@/core/helpers/numberFormatHelper';
 import wallets from './handlers/config';
 import WALLET_TYPES from '../access-wallet/common/walletTypes';
 import Resolver from '@/modules/name-resolver/index';
-import { EventBus } from '@/core/plugins/eventBus';
+// import { EventBus } from '@/core/plugins/eventBus';
 import handlerAnalytics from '@/modules/analytics-opt-in/handlers/handlerAnalytics.mixin';
 import { DASHBOARD } from '../analytics-opt-in/handlers/configs/events';
 
@@ -466,6 +466,7 @@ export default {
   },
   mounted() {
     this.setupNameResolver();
+    this.refresh();
   },
   methods: {
     ...mapActions('external', ['setTokenAndEthBalance']),
@@ -549,9 +550,9 @@ export default {
      * sets showPaperWallet to true
      * to open the modal
      */
-    openPaperWallet() {
+    /* openPaperWallet() {
       EventBus.$emit('openPaperWallet');
-    },
+    }, */
     /**
      * Copies address
      */
@@ -614,6 +615,7 @@ export default {
   position: relative;
   width: 100%;
 }
+
 .mew-card {
   opacity: 0;
   border-radius: 16px;
@@ -623,6 +625,7 @@ export default {
   left: 0;
   z-index: 0;
   height: 100%;
+
   img {
     height: 100%;
     width: 100%;
@@ -638,20 +641,24 @@ export default {
   top: 0;
   left: 0;
   z-index: 1;
+
   .info-container--addr {
     font-size: 10px;
     line-height: 10px;
     color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
   }
+
   .info-container--addr:hover {
     color: white;
   }
+
   .info-container--text {
     font-size: 12px;
     line-height: 20px;
     color: rgba(255, 255, 255, 0.9);
   }
+
   .info-container--text-chain-balance {
     font-size: 14px;
     line-height: 20px;
@@ -683,6 +690,7 @@ export default {
   .info-container--action-:hover {
     opacity: 1;
   }
+
   // .info-container--icon:hover {
   //   color: var(--v-greenPrimary-base) !important;
   // }
@@ -711,6 +719,7 @@ export default {
 
 .personal-account-container {
   border-radius: 10px;
+
   &:hover {
     background: rgba(255, 255, 255, 0.08);
     padding-left: 8px;
@@ -729,6 +738,7 @@ export default {
   height: 24px;
   width: 100%;
 }
+
 .theme-dark-heading .v-skeleton-loader__bone::before {
   background-color: rgba(0, 0, 0, 0.2);
 }

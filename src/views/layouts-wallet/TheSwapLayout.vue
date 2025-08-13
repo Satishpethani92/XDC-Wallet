@@ -12,9 +12,9 @@
         :amount="amount"
       />
     </template>
-    <template #rightColItem1>
+    <!-- <template #rightColItem1>
       <module-trending-tokens draggable />
-    </template>
+    </template> -->
     <template #rightColItem2>
       <module-tokens-value draggable />
     </template>

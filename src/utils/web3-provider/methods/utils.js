@@ -61,7 +61,7 @@ const setEvents = (promiObj, tx, dispatch) => {
               root: true
             }
           );
-        }, 3000); //give network some time to update
+        }, 8000); //give network some time to update
         dispatch('notifications/updateNotification', notification, {
           root: true
         });
@@ -87,7 +87,7 @@ const setEvents = (promiObj, tx, dispatch) => {
               root: true
             }
           );
-        }, 3000); //give network some time to update
+        }, 8000); //give network some time to update
         dispatch('notifications/updateNotification', notification, {
           root: true
         });

@@ -1,9 +1,9 @@
 <template>
   <the-wrapper-wallet>
     <template #leftColItem1> <module-message /> </template>
-    <template #rightColItem1>
+    <!-- <template #rightColItem1>
       <module-trending-tokens />
-    </template>
+    </template> -->
   </the-wrapper-wallet>
 </template>
 

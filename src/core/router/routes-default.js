@@ -17,9 +17,9 @@ export default {
       component: () => import('@/views/layouts-default/TheHomeLayout'),
       meta: {
         noAuth: true,
-        title: 'MyEtherWallet | The Best Crypto Wallet For Web3',
+        title: 'XDCWallet | The Best Crypto Wallet For Web3',
         description:
-          'Trusted by millions of users, MyEtherWallet is the first and best open source Ethereum wallet. Create a secure crypto wallet, buy, sell, stake and swap.'
+          'Trusted by millions of users, XDCWallet is the first and best open source Ethereum wallet. Create a secure crypto wallet, buy, sell, stake and swap.'
       }
     },
     {
@@ -30,7 +30,7 @@ export default {
         noAuth: true,
         title: 'What MyEtherWallet Does | How MyEtherWallet Works',
         description:
-          "How you can use MyEtherWallet to create a crypto wallet, swap crypto and more. Ethereum's original wallet."
+          "How you can use MyEtherWallet to create a crypto wallet, swap crypto and more. XDC's original wallet."
       }
     },
     {
@@ -76,7 +76,7 @@ export default {
         noAuth: true,
         title: 'Tools For Ethereum | Verify Message | Send Offline',
         description:
-          "Verify messages and send offline using MyEtherWallet. Ethereum's best crypto wallet since 2015."
+          "Verify messages and send offline using MyEtherWallet. XDC's best crypto wallet since 2015."
       }
     },
     {

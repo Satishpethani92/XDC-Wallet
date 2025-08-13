@@ -55,7 +55,7 @@ import { mapActions } from 'vuex';
 import { Toast, SENTRY } from '@/modules/toast/handler/handlerToast';
 import {
   WalletConnectWallet,
-  WalletLinkWallet
+  // WalletLinkWallet
 } from '@/modules/access-wallet/hybrid/handlers';
 import { ROUTES_WALLET } from '@/core/configs/configRoutes';
 
@@ -85,13 +85,13 @@ export default {
             this.openWalletConnect();
           }
         },
-        {
+        /* {
           label: 'WalletLink',
           icon: require('@/assets/images/icons/icon-wallet-link.png'),
           fn: () => {
             this.openWalletLink();
           }
-        }
+        } */
       ]
     };
   },
@@ -119,7 +119,7 @@ export default {
         Toast(e.message, {}, SENTRY);
       }
     },
-    openWalletLink() {
+    /* openWalletLink() {
       try {
         this.trackAccessWalletAmplitude(ACCESS_WALLET.WALLET_LINK_QR_SHOWN);
         WalletLinkWallet()
@@ -140,7 +140,7 @@ export default {
       } catch (e) {
         Toast(e.message, {}, SENTRY);
       }
-    }
+    } */
   }
 };
 </script>

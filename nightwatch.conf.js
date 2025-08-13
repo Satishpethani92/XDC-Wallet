@@ -6,7 +6,7 @@ module.exports = {
   // },
   test_settings: {
     default: {
-      launch_url: 'https://localhost:8080',
+      launch_url: 'https://localhost:8000',
       desiredCapabilities: {
         browserName: 'chrome',
         acceptSslCerts: true,

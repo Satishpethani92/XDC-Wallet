@@ -287,7 +287,7 @@ export default {
           {
             color: 'white',
             title: 'Browser extension',
-            subtitle: 'Use your Web3 wallet with MEW',
+            subtitle: 'Use your Web3 wallet with XDCWallet',
             official: false,
             recommended: true,
             useBtn: this.eip6963Providers.length <= 1,
@@ -302,7 +302,7 @@ export default {
           {
             color: 'white',
             title: 'Mobile Apps',
-            subtitle: 'WalletConnect, WalletLink',
+            subtitle: 'WalletConnect',
             official: false,
             recommended: true,
             useBtn: true,

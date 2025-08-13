@@ -17,10 +17,14 @@ const webpackConfig = {
     process: true
   },
   devServer: {
+    watchOptions: {
+      poll: 1000,
+      ignored: /node_modules/
+    },
     https: true,
     host: 'localhost',
     hotOnly: true,
-    port: 8080,
+    port: 8000,
     headers: {
       'Strict-Transport-Security':
         'max-age=63072000; includeSubdomains; preload',
@@ -37,7 +41,10 @@ const webpackConfig = {
   plugins: [
     new webpack.SourceMapDevToolPlugin(sourceMapsConfig),
     new webpack.NormalModuleReplacementPlugin(/^any-promise$/, 'bluebird'),
-    new webpack.NormalModuleReplacementPlugin(/^\@sinclair\/typebox$/, '@sinclair/typebox/build/cjs'),
+    new webpack.NormalModuleReplacementPlugin(
+      /^\@sinclair\/typebox$/,
+      '@sinclair/typebox/build/cjs'
+    ),
     // new BundleAnalyzerPlugin(),
     new ImageminPlugin({
       disable: process.env.NODE_ENV !== 'production',

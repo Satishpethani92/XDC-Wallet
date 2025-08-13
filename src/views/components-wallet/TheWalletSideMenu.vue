@@ -36,7 +36,7 @@
             <!-- MEW logo -->
             <!-- ================================================================================== -->
             <router-link :to="offlineModeRoute">
-              <img width="120" src="@/assets/images/icons/logo-mew.svg" />
+              <img width="120" src="@/assets/images/logo/xdc-wallet-logo.png" />
             </router-link>
 
             <!-- ================================================================================== -->
@@ -267,7 +267,7 @@
         <app-btn-menu class="mr-3" @click.native="openNavigation" />
 
         <router-link :to="offlineModeRoute" style="line-height: 0">
-          <img height="26" src="@/assets/images/icons/logo-mew.svg" />
+          <img width="26" src="@/assets/images/logo/xdc-wallet-logo.png" />
         </router-link>
         <v-spacer />
         <module-notifications v-if="!isOfflineApp" invert-icon />
@@ -285,7 +285,7 @@ import nft from '@/assets/images/icons/icon-nft.svg';
 import swap from '@/assets/images/icons/icon-swap-enable.svg';
 import receive from '@/assets/images/icons/icon-arrow-down-right.svg';
 import buy from '@/assets/images/icons/icon-credit-card.svg';
-import dapp from '@/assets/images/icons/icon-apps-enable.svg';
+// import dapp from '@/assets/images/icons/icon-apps-enable.svg';
 import contract from '@/assets/images/icons/icon-contract-enable.svg';
 import message from '@/assets/images/icons/icon-message-enable.svg';
 import settings from '@/assets/images/icons/icon-setting-enable.svg';
@@ -316,7 +316,7 @@ import {
   DASHBOARD,
   STAKING
 } from '@/modules/analytics-opt-in/handlers/configs/events';
-import dappsMeta from '@/dapps/metainfo-dapps';
+// import dappsMeta from '@/dapps/metainfo-dapps';
 import stakingMeta from '@/dapps/metainfo-staking';
 import buyMore from '@/core/mixins/buyMore.mixin';
 import isNew from '@/core/helpers/isNew.js';
@@ -403,7 +403,7 @@ export default {
     },
     sectionOne() {
       if (this.online) {
-        const hasNew = Object.values(dappsMeta).filter(item => {
+        /* const hasNew = Object.values(dappsMeta).filter(item => {
           const dappSupport = item.networks.findIndex(nType => {
             if (nType.chainID === this.network.type.chainID) {
               return nType;
@@ -412,19 +412,19 @@ export default {
           if (isNew(item.release) && dappSupport > -1 && !item.staking) {
             return item;
           }
-        });
+        }); */
         return [
           {
             title: this.$t('interface.menu.portfolio'),
             route: this.offlineModeRoute,
             icon: portfolio
           },
-          {
+          /* {
             title: this.$t('interface.menu.apps'),
             route: { name: ROUTES_WALLET.DAPPS.NAME },
             icon: dapp,
             hasNew: hasNew.length > 0
-          },
+          }, */
           {
             title: this.$t('interface.menu.nft'),
             route: { name: ROUTES_WALLET.NFT_MANAGER.NAME },

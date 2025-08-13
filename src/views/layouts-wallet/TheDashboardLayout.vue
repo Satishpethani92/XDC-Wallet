@@ -9,12 +9,12 @@
         <module-balance />
       </div>
     </template>
-    <template #leftColItem2>
+    <!-- <template #leftColItem2>
       <div>
         <module-trending-tokens is-dashboard />
       </div>
-    </template>
-    <template #leftColItem3>
+    </template> -->
+    <!-- <template #leftColItem3>
       <div>
         <dashboard-banner :show-banner="showBanner" />
         <staking-summary-card
@@ -25,16 +25,16 @@
           :apr="currentApr"
         />
       </div>
-    </template>
+    </template> -->
     <template #[hasBanner]>
       <module-tokens />
     </template>
     <template v-if="isEthNetwork" #rightColItem1>
       <module-swap-rates />
     </template>
-    <template #[name]>
+    <!-- <template #[name]>
       <wallet-carousel />
-    </template>
+    </template> -->
   </the-wrapper-wallet>
 </template>
 
@@ -53,8 +53,8 @@ const COINBASE_ENDPOINT = 'https://coinbase-staking.mewapi.io/staking';
 
 export default {
   components: {
-    WalletCarousel: () =>
-      import('@/views/components-wallet/WalletCarousel.vue'),
+    /* WalletCarousel: () =>
+      import('@/views/components-wallet/WalletCarousel.vue'), */
     ModuleBalance: () => import('@/modules/balance/ModuleBalance'),
     ModuleTokens: () => import('@/modules/balance/ModuleTokens'),
     ModuleSwapRates: () => import('@/modules/swap/ModuleSwapRates'),
@@ -105,19 +105,19 @@ export default {
     hasBanner() {
       return `leftColItem${this.showBanner || this.hasStaked ? 4 : 3}`;
     },
-    name() {
+    /* name() {
       return !this.isEthNetwork ? 'rightColItem1' : 'rightColItem2';
-    },
+    }, */
     loading() {
       return this.stakedLoading || this.cbStakeLoading;
-    },
-    ethPrice() {
+    }
+    /* ethPrice() {
       const { price } = this.getCoinGeckoTokenById('ethereum');
       return BigNumber(price).toNumber();
-    },
-    currentApr() {
+    }, */
+    /* currentApr() {
       return this.handlerStaked.apr;
-    }
+    } */
   },
   mounted() {
     if (this.network.type.chainID === ETH.chainID) {

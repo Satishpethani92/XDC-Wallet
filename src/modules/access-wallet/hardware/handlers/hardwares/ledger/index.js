@@ -61,7 +61,7 @@ class ledgerWallet {
         throw new Error('Wrong App or No App');
       if (this.openedApp !== 'BOLOS' && this.openedApp !== ledgerApp.name) {
         attemptToQuitApp(this.transport, this.openedApp);
-        await delay(3000);
+        await delay(8000);
         if (!bluetooth) {
           this.transport = await getLedgerTransport();
         }
