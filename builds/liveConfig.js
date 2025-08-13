@@ -24,7 +24,7 @@ const exportObj = {
       navigateFallbackBlacklist: [/staking/]
     },
     iconPaths: {
-      faviconSVG: 'icons/favicon.svg',
+      faviconSVG: 'icons/favicon.png',
       favicon32: 'icons/favicon-32x32.png',
       favicon16: 'icons/favicon-16x16.png',
       appleTouchIcon: 'icons/apple-touch-icon-152x152.png',
