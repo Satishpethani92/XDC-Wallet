@@ -7,144 +7,15 @@
             class="header__wrapper d-flex align-items-center justify-content-between js-header fixed"
           >
             <a href="/" class="header__logo">
-              <logo-component />
+              <img
+                src="../../assets/images/logo/xdc-wallet-logo.png"
+                alt="XDC-wallet-logo-img"
+                height="auto"
+                width="113px"
+              />
             </a>
-            <div class="header__menu">
-              <a
-                href="https://ccswap.myetherwallet.com/"
-                target="_blank"
-                class="header__menu-link"
-                >Buy Crypto</a
-              >
-              <a
-                href="https://www.myetherwallet.com/how-it-works#swap"
-                class="header__menu-link"
-                >Swap Tokens</a
-              >
-              <!-- <a href="#" class="header__menu-link">Earn</a> -->
-              <div class="header__menu-link header__menu-link--dropdown">
-                More features
-                <div class="header__menu-dropdown">
-                  <div class="header__menu-dropdown-wrap">
-                    <a
-                      href="https://www.myetherwallet.com/staking"
-                      class="header__menu-dropdown-link"
-                      >Staking</a
-                    >
-                    <a
-                      href="https://www.myetherwallet.com/how-it-works#nft"
-                      class="header__menu-dropdown-link"
-                      >NFT</a
-                    >
-                    <!-- <a href="#" class="header__menu-dropdown-link">Networks</a> -->
-                    <a
-                      href="https://www.myetherwallet.com/how-it-works#dapps"
-                      class="header__menu-dropdown-link"
-                      >DApps</a
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="header__menu-link header__menu-link--dropdown">
-                Resources
-                <div class="header__menu-dropdown">
-                  <div class="header__menu-dropdown-wrap">
-                    <a
-                      href="https://www.myetherwallet.com/blog"
-                      target="_blank"
-                      class="header__menu-dropdown-link"
-                      >Blog</a
-                    >
-                    <a
-                      href="https://help.myetherwallet.com/en/"
-                      target="_blank"
-                      class="header__menu-dropdown-link"
-                      >Help Center</a
-                    >
-                    <a
-                      href="https://www.myetherwallet.com/faq"
-                      target="_blank"
-                      class="header__menu-dropdown-link"
-                      >FAQ</a
-                    >
-                    <a
-                      href="mailto:support@myetherwallet.com"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      class="header__menu-dropdown-link"
-                      >Customer Support</a
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="header__menu-link header__menu-link--dropdown">
-                Products
-                <div class="header__menu-dropdown">
-                  <div class="header__menu-dropdown-wrap">
-                    <div class="header__menu-products">
-                      <a
-                        href="https://www.mewwallet.com/"
-                        target="_blank"
-                        class="header__menu-products-item header__menu-products-item--bg"
-                      >
-                        <img
-                          src="@/assets/images/icons/mewwallet-logo.svg"
-                          alt=""
-                        />
-                        <div>
-                          <h6>MEW Mobile App</h6>
-                          <p>Mobile wallet</p>
-                        </div>
-                      </a>
-                      <a
-                        href="https://www.myetherwallet.com/wallet/access"
-                        target="_blank"
-                        class="header__menu-products-item header__menu-products-item--bg"
-                      >
-                        <img src="@/assets/images/icons/mew-logo.svg" alt="" />
-                        <div>
-                          <h6>MEW Portfolio Manager</h6>
-                          <p>Web portfolio interface</p>
-                        </div>
-                      </a>
-                    </div>
-                    <div class="header__menu-products">
-                      <a
-                        href="https://www.enkrypt.com/"
-                        target="_blank"
-                        class="header__menu-products-item"
-                      >
-                        <img
-                          src="@/assets/images/icons/enkrypt-logo.png"
-                          alt=""
-                        />
-                        <div>
-                          <h6>Enkrypt</h6>
-                          <p>Browser extension wallet</p>
-                        </div>
-                      </a>
-                      <a
-                        href="https://www.ethvm.com/"
-                        target="_blank"
-                        class="header__menu-products-item"
-                      >
-                        <img
-                          src="@/assets/images/icons/ethvm-logo.svg"
-                          alt=""
-                        />
-                        <div>
-                          <h6>ethVM</h6>
-                          <p>Blockchain explorer</p>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             <a
-              href="https://www.myetherwallet.com/wallet/access"
-              target="_blank"
+              href="/#/wallet/access"
               class="header__access-button"
               :style="showAccess"
             >
@@ -165,14 +36,12 @@
 </template>
 
 <script>
-import LogoComponent from '@/assets/images/icons/logo-component.vue';
 import OpenMenu from '@/assets/images/icons/open-menu.vue';
 import { ROUTES_HOME } from '@/core/configs/configRoutes';
 
 export default {
   name: 'TheDefaultHeader',
   components: {
-    LogoComponent,
     OpenMenu
   },
   data() {

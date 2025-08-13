@@ -1,37 +1,38 @@
 <template>
   <v-container>
-    <div class="py-7" />
-    <v-sheet align="center">
-      <h1 class="textDark--text pb-5">
-        {{ $t('home.community-title') | lokalise('home.community-title') }}
-      </h1>
-    </v-sheet>
-    <v-sheet color="transparent" max-width="900px" class="mx-auto">
-      <v-row align="center" justify="center">
-        <v-col
-          v-for="(p, key) in socials"
-          :key="key"
-          align="center"
-          cols="4"
-          sm="2"
-          md="1"
-        >
-          <a :href="p.link" target="_blank" @click="trackSocialClick(p)">
-            <img
-              v-lazy="p.img"
-              max-height="40px"
-              max-width="40px"
-              contain
-              class="align-center justify-center"
-              style="border-radius: 50%"
-            />
-          </a>
-          <div class="pt-2 textLight--text mew-label text-center">
-            {{ p.label }}
-          </div>
-        </v-col>
-      </v-row>
-    </v-sheet>
+    <div class="py-7">
+      <v-sheet align="center">
+        <h1 class="textDark--text pb-5">
+          {{ $t('home.community-title') | lokalise('home.community-title') }}
+        </h1>
+      </v-sheet>
+      <v-sheet color="transparent" max-width="900px" class="mx-auto">
+        <v-row align="center" justify="center">
+          <v-col
+            v-for="(p, key) in socials"
+            :key="key"
+            align="center"
+            cols="4"
+            sm="2"
+            md="1"
+          >
+            <a :href="p.link" target="_blank" @click="trackSocialClick(p)">
+              <img
+                v-lazy="p.img"
+                max-height="40px"
+                max-width="40px"
+                contain
+                class="align-center justify-center"
+                style="border-radius: 50%"
+              />
+            </a>
+            <div class="pt-2 textLight--text mew-label text-center">
+              {{ p.label }}
+            </div>
+          </v-col>
+        </v-row>
+      </v-sheet>
+    </div>
   </v-container>
 </template>
 

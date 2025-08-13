@@ -33,35 +33,6 @@
               @click.native="navigateToAccessWallet"
             />
           </div>
-          <div class="d-flex">
-            <mew-button
-              class="extension-btns chrome-extension text-transform--none mt-5 mr-2"
-              :has-full-width="false"
-              btn-style="transparent"
-              color-theme="white"
-              btn-size="large"
-              style="border-radius: 40px !important"
-              :btn-link="browserLink"
-            >
-              <img class="mr-3 browser-icons" :src="browserLogo" />
-              Get the Enkrypt Extension
-            </mew-button>
-            <mew-button
-              class="extension-btns app-extension mt-5"
-              :has-full-width="false"
-              btn-style="transparent"
-              color-theme="white"
-              btn-size="large"
-              style="border-radius: 40px !important"
-              @click.native="openMewWallet"
-            >
-              <img
-                class="mr-2 app-icons"
-                src="@/assets/images/icons/icon-apple-google.svg"
-              />
-              Get the app
-            </mew-button>
-          </div>
         </v-card>
         <img
           src="@/assets/images/backgrounds/bg-home-spaceman-and-dog.svg"

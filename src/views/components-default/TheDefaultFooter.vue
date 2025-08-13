@@ -176,7 +176,7 @@
         </div>
         <div class="col-6">
           <div class="footer__social">
-            <h5>Join MEW Community</h5>
+            <h5>Join XDC Community</h5>
             <div class="footer__social-links">
               <a
                 href="https://www.facebook.com/MyEtherWallet"

@@ -1,7 +1,7 @@
 {
-  "tagline1": "Ethereum's ",
+  "tagline1": "XDC's ",
   "tagline2": "Original Wallet",
-  "subheading": "MEW (MyEtherWallet) is a free, client-side interface helping you interact with the Ethereum blockchain. Our easy-to-use, open-source platform allows you to generate wallets, interact with smart contracts, and so much more.",
+  "subheading": "XDCWallet is a free, client-side interface helping you interact with the Ethereum blockchain. Our easy-to-use, open-source platform allows you to generate wallets, interact with smart contracts, and so much more.",
   "create-wallet": {
     "title": "Create a new wallet",
     "subtitle-one": "Please select a method to create a new wallet",
@@ -73,7 +73,7 @@
     "description": "ETH Blocks is an NFT series representing mined Ethereum blocks and their properties. Whether it's a special block number, the block of your first transaction, or a block that contains a transaction with a special message. Own a part of history with ETH Blocks by MEW.",
     "btn-text": "Access your wallet to Mint"
   },
-  "community-title": "Join MEW Community",
+  "community-title": "Join XDC Community",
   "about-mew": {
     "heading": "Easy and secure access to the Ethereum Blockchain",
     "subheading": "Why MEW",
