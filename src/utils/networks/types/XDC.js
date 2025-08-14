@@ -5,8 +5,8 @@ export default {
   name_long: 'XDC Network',
   homePage: 'https://xinfin.org/',
   blockExplorer: 'BlocksScan',
-  blockExplorerTX: 'https://xdc.blocksscan.io/tx/[[txHash]]',
-  blockExplorerAddr: 'https://xdc.blocksscan.io/addr/[[address]]',
+  blockExplorerTX: 'https://xdcscan.com/tx/[[txHash]]',
+  blockExplorerAddr: 'https://xdcscan.com/address/[[address]]',
   chainID: 50,
   tokens: import('@/_generated/tokens/tokens-etc.json').then(
     val => val.default

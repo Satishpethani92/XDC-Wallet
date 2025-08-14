@@ -113,7 +113,7 @@ export default {
   props: {
     isWallet: { type: Boolean, default: true },
     /** Set this prop to pass specific networks to be displayed */
-    filterTypes: { type: Array, default: () => [] },
+    // filterTypes: { type: Array, default: () => [] },
     /** Set this prop to false if device does not support networks */
     hasNetworks: { type: Boolean, default: true }
   },
@@ -145,25 +145,32 @@ export default {
      * Property returns sorted network names alphabetically in this order: ETH, main and then test networks
      * @returns {string[]}
      */
-    typeNames() {
+    /* typeNames() {
       if (this.hasNetworks) {
         const unsorted =
           this.filterTypes.length > 0
             ? [...this.filterTypes]
             : Object.keys(types);
-        unsorted.splice(unsorted.indexOf('XDC'), 1);
-        unsorted.splice(unsorted.indexOf('TXDC'), 1);
-        unsorted.splice(unsorted.indexOf('ETH'), 1);
-        unsorted.sort();
+           
+            unsorted.splice(unsorted.indexOf('XDC'), 1);
+            unsorted.splice(unsorted.indexOf('TXDC'), 1);
+            unsorted.splice(unsorted.indexOf('ETH'), 1);
+            unsorted.sort();
         const test = unsorted.filter(item => {
           return types[item].isTestNetwork;
-        });
+        });      
         const main = unsorted.filter(item => {
           return !types[item].isTestNetwork;
         });
         const sorted = main.concat(test);
-        sorted.unshift('XDC', 'TXDC', 'ETH');
+        sorted.unshift('XDC', 'TXDC', 'ETH');        
         return sorted;
+      }
+      return [];
+    }, */
+    typeNames() {
+      if (this.hasNetworks) {
+        return ['XDC', 'TXDC'];
       }
       return [];
     },

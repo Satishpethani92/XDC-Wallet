@@ -108,7 +108,7 @@
         <div class="col-6">
           <div class="footer__social">
             <h5>Join XDC Community</h5>
-            <div class="footer__social-links">
+            <div class="footer__social-links flex-wrap">
               <a
                 href="https://www.facebook.com/XDCNetworkBlockchain"
                 target="_blank"
@@ -361,7 +361,7 @@ export default {
       position: absolute;
       width: 100%;
       left: 0;
-      bottom: -218px;
+      bottom: -170px;
     });
 
     p {
@@ -389,7 +389,7 @@ export default {
 
   &__social {
     .screen-tablet-portaint({
-      margin-bottom: 94px;
+      // margin-bottom: 94px;
     });
 
     h5 {

@@ -21,13 +21,13 @@
             >
               Access my wallet
             </a>
-            <a
+            <!-- <a
               href="javascript:void(0)"
               class="header__mobile-menu-open"
               @click="openMobileMenu"
             >
               <open-menu />
-            </a>
+            </a> -->
           </div>
         </div>
       </div>
@@ -36,13 +36,13 @@
 </template>
 
 <script>
-import OpenMenu from '@/assets/images/icons/open-menu.vue';
+// import OpenMenu from '@/assets/images/icons/open-menu.vue';
 import { ROUTES_HOME } from '@/core/configs/configRoutes';
 
 export default {
   name: 'TheDefaultHeader',
   components: {
-    OpenMenu
+    // OpenMenu
   },
   data() {
     return {};
@@ -58,9 +58,9 @@ export default {
     }
   },
   methods: {
-    openMobileMenu() {
+    /* openMobileMenu() {
       this.$emit('openMobileMenu');
-    }
+    } */
   }
 };
 </script>
@@ -87,7 +87,7 @@ export default {
   }
 
   .screen-tablet-header({
-  height: 80px;
+  // height: 80px;
 });
 
   &__wrapper {
@@ -95,7 +95,7 @@ export default {
     position: relative;
 
     .screen-tablet-header({
-    height: 80px;
+    // height: 80px;
   });
 
     &::after {
@@ -326,11 +326,12 @@ export default {
     }
 
     .screen-tablet-header({
-    display: none;
+      font-size: 14px;
+    // display: none;
   });
 
     .screen-desktop-min({
-  font-size: 16px;
+  // font-size: 16px;
 });
   }
 

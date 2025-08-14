@@ -42,19 +42,19 @@
     </mew-popup>
 
     <div style="width: 350px" class="pa-6 text-left">
-      <div class="mew-heading-2 mb-4">Select a derivation path</div>
+      <div class="mew-heading-2 mb-6">Select a derivation path</div>
 
       <!-- ===================================================================================== -->
       <!-- Search Component to search paths -->
       <!-- ===================================================================================== -->
-      <mew-search
+      <!-- <mew-search
         :value="searchValue"
         class="mb-8"
         placeholder="find a path"
         is-compact
         is-filled
         @input="setSearch"
-      />
+      /> -->
 
       <!-- ===================================================================================== -->
       <!-- Displays the filtered customs paths -->
@@ -121,7 +121,7 @@
       <div
         v-for="(filteredPath, idx) in filteredPaths"
         :key="filteredPath.name + idx"
-        class="mb-7 d-flex align-center justify-space-between cursor-pointer"
+        class="mb-3 d-flex align-center justify-space-between cursor-pointer"
         @click="setPath(filteredPath)"
       >
         <div class="d-flex align-center">
@@ -152,7 +152,7 @@
         </span>
       </div>
 
-      <div
+      <!-- <div
         v-if="!disableCustomPaths"
         class="d-flex align-center justify-space-between bottom-buttons pt-4"
       >
@@ -175,7 +175,7 @@
         >
           Remove all custom
         </mew-button>
-      </div>
+      </div> -->
 
       <div :class="showCustomField ? 'open' : ''" class="custom-field">
         <mew-input
@@ -216,10 +216,9 @@
 
 <script>
 import { mapGetters, mapState, mapActions } from 'vuex';
-import { isEmpty } from 'lodash';
-
-import { checkCustomPath } from '@/modules/access-wallet/software/handlers/pathHelper';
-import { Toast, ERROR, SUCCESS } from '@/modules/toast/handler/handlerToast';
+// import { isEmpty } from 'lodash';
+// import { checkCustomPath } from '@/modules/access-wallet/software/handlers/pathHelper';
+// import { Toast, ERROR, SUCCESS } from '@/modules/toast/handler/handlerToast';
 import { ethereum as ethereumPath } from '@/modules/access-wallet/hardware/handlers/configs/configPaths.js';
 export default {
   props: {
@@ -281,7 +280,9 @@ export default {
     /**
      * Filtered paths based on search
      */
-    filteredPaths() {
+    /* filteredPaths() {
+      console.log("this.passedPaths", this.passedPaths);
+      
       return this.passedPaths.filter(path => {
         if (!this.paths.find(e => e.value === path.value)) {
           if (this.searchValue) {
@@ -292,6 +293,11 @@ export default {
           }
           return path;
         }
+      });
+    } */
+    filteredPaths() {
+      return this.passedPaths.filter(path => {
+        return path.value === "m/44'/550'/0'/0";
       });
     }
   },
@@ -352,18 +358,18 @@ export default {
     setCustomPath(val) {
       if (val) this.customPath = val.trim();
       else this.customPath = '';
-    },
+    }
     /**
      * Method sets searchValue on mew-search input event
      */
-    setSearch(newVal) {
+    /* setSearch(newVal) {
       this.searchValue = newVal;
-    },
+    }, */
     /**
      * Method to add custom path.
      * Checks if path is valid and already exists in the filtered paths.
      */
-    saveCustomPath() {
+    /* saveCustomPath() {
       try {
         const customPath = checkCustomPath(this.customPath);
         if (!customPath) {
@@ -403,7 +409,7 @@ export default {
       } catch (error) {
         Toast(error, {}, ERROR);
       }
-    }
+    } */
   }
 };
 </script>

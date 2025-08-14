@@ -102,12 +102,12 @@ const setTokenAndEthBalance = function ({
     const currentProvider = rootState.wallet.web3.eth.currentProvider;
     // Prevent the 'Invalid return values' error
     // when accessing new network on MetaMask
-    if (
+    /* if (
       rootState.wallet.identifier === WALLET_TYPES.WEB3_WALLET &&
       network.type.chainID !== parseInt(currentProvider.chainId)
-    ) {
+    ) { 
       return;
-    }
+    }*/
     if (
       rootState.wallet.identifier !== WALLET_TYPES.WEB3_WALLET &&
       currentProvider.connection
@@ -116,7 +116,7 @@ const setTokenAndEthBalance = function ({
       if (network.url !== currentProviderUrl) {
         dispatch('wallet/setWeb3Instance', undefined, { root: true });
       }
-    }
+    } 
     _getBalance();
     return;
   }

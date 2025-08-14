@@ -4,7 +4,7 @@
     <div class="d-flex align-start mb-2 flex-wrap">
       <mew-select
         :value="ledgerApp"
-        :items="ledgerApps"
+        :items="modifiedLedgerApps"
         :is-custom="true"
         class="mr-0 mr-sm-4 network-selection"
         @input="handleApp"
@@ -18,7 +18,7 @@
         @setPath="setPath"
       />
     </div>
-    <div class="sheet d-flex align-center justify-center">
+    <!-- <div class="sheet d-flex align-center justify-center">
       <div
         class="d-flex align-center justify-center pb-8 pt-15 pt-md-18 flex-wrap"
       >
@@ -37,7 +37,7 @@
           contain
         />
       </div>
-    </div>
+    </div> -->
     <div
       :class="[!isMobile ? 'justify-space-between' : '']"
       class="d-flex justify-center text-center mt-5 flex-wrap"
@@ -117,6 +117,9 @@ export default {
   },
   computed: {
     ...mapGetters('wallet', ['getLedgerApp', 'initialLoad']),
+    modifiedLedgerApps() {
+      return this.ledgerApps.filter(app => app.value === 'XDC');
+    },
     isRecovery() {
       return this.ledgerApp?.value?.includes('Recovery');
     },

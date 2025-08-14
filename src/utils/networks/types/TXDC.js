@@ -5,8 +5,8 @@ export default {
   name_long: 'APOTHEM Network',
   homePage: 'https://xinfin.org/',
   blockExplorer: 'BlocksScan',
-  blockExplorerTX: 'https://apothem.blocksscan.io/tx/[[txHash]]',
-  blockExplorerAddr: 'https://apothem.blocksscan.io/addr/[[address]]',
+  blockExplorerTX: 'https://explorer.apothem.network/tx/[[txHash]]',
+  blockExplorerAddr: 'https://explorer.apothem.network/address/[[address]]',
   chainID: 51,
   tokens: import('@/_generated/tokens/tokens-etc.json').then(
     val => val.default
@@ -16,7 +16,7 @@ export default {
   ),
   icon: xdc,
   currencyName: 'TXDC',
-  isTestNetwork: false,
+  isTestNetwork: true,
   isEthVMSupported: {
     supported: false,
     url: null,

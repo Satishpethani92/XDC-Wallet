@@ -206,9 +206,9 @@ export default {
       ],
       /* Derivation Path */
       selectedPath: {
-        name: 'Ethereum',
-        subtext: "m/44'/60'/0'/0",
-        value: "m/44'/60'/0'/0"
+        name: 'XDC Network',
+        subtext: "m/44'/550'/0'/0",
+        value: "m/44'/550'/0'/0"
       },
       walletInstance: {}
     };
@@ -356,9 +356,9 @@ export default {
       this.length = 12;
       /* Derivation Path */
       this.selectedPath = {
-        name: 'Ethereum',
-        subtext: "m/44'/60'/0'/0",
-        value: "m/44'/60'/0'/0"
+        name: 'XDC Network',
+        subtext: "m/44'/550'/0'/0",
+        value: "m/44'/550'/0'/0"
       };
       this.walletInstance = {};
     },
