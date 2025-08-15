@@ -13,7 +13,7 @@
       :title="totalTokensValue"
       class="bgWalletBlock"
     >
-      <template #rightHeaderContainer>
+      <!-- <template #rightHeaderContainer>
         <div>
           <v-menu
             bottom
@@ -47,7 +47,7 @@
             </v-list>
           </v-menu>
         </div>
-      </template>
+      </template> -->
       <template #moduleBody>
         <balance-table class="mb-4" :table-data="tokensData" />
       </template>
@@ -132,7 +132,7 @@ export default {
         { text: 'Balance', value: 'balance', sortable: false, width: '20%' },
         { text: '', value: 'callToAction', sortable: false, width: '10%' }
       ],
-      items: [
+      /* items: [
         {
           icon: 'mdi-plus',
           title: 'Add Token',
@@ -143,7 +143,7 @@ export default {
           title: 'Edit Token',
           action: this.toggleEditCustomToken
         }
-      ],
+      ], */
       selectedToken: {},
       xrc20Tokens: [
         {
