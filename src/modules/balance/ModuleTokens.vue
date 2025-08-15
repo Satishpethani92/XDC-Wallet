@@ -90,10 +90,10 @@
 import { mapGetters, mapState } from 'vuex';
 import { uniqWith, isEqual } from 'lodash';
 import BigNumber from 'bignumber.js';
-import { ROUTES_WALLET } from '@/core/configs/configRoutes';
+// import { ROUTES_WALLET } from '@/core/configs/configRoutes';
 import { currencyToNumber } from '@/core/helpers/localization';
 import handlerAnalytics from '@/modules/analytics-opt-in/handlers/handlerAnalytics.mixin';
-import { DASHBOARD } from '../analytics-opt-in/handlers/configs/events';
+// import { DASHBOARD } from '../analytics-opt-in/handlers/configs/events';
 import gamaImg from '../../assets/images/networks/gama.jpg';
 import lbtImg from '../../assets/images/networks/lbt.jpg';
 import dopuImg from '../../assets/images/networks/dopu.webp';
@@ -478,7 +478,7 @@ export default {
         status: priceData.change24h >= 0 ? '+' : '-',
         price: priceData.price > 0 ? this.getFiatValue(priceData.price) : 'N/A',
         tokenImg: this.getXrc20TokenImage(token.symbol),
-        callToAction:
+        /* callToAction:
           this.hasSwap && balanceBN.gt(0) && !token.disableSwap
             ? [
                 {
@@ -496,7 +496,8 @@ export default {
                   colorTheme: 'greenPrimary'
                 }
               ]
-            : []
+            : [] */
+        callToAction: []
       };
     },
 
@@ -564,7 +565,7 @@ export default {
         item.symbol == 'ETH'
           ? require('@/assets/images/networks/eth.svg')
           : item.img || this.network.type.icon;
-      if (this.hasSwap && !item.disableSwap) {
+      /* if (this.hasSwap && !item.disableSwap) {
         newObj.callToAction = [
           {
             title: 'Swap',
@@ -579,7 +580,8 @@ export default {
             colorTheme: 'greenPrimary'
           }
         ];
-      }
+      } */
+      newObj.callToAction = [];
       return newObj;
     },
 
