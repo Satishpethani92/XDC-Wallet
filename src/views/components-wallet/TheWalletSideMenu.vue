@@ -614,9 +614,9 @@ export default {
   methods: {
     ...mapActions('wallet', ['removeWallet']),
     ...mapActions('global', ['setDarkMode']),
-    trackToSwap() {
+    /* trackToSwap() {
       this.trackDashboardAmplitude(DASHBOARD.SWAP_LEFT_NAVIGATION);
-    },
+    }, */
     trackInteract() {
       this.trackContract(CONTRACT.NAVIGATE_TO_INTERACT);
     },
