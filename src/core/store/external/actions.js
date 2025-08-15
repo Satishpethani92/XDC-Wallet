@@ -8,7 +8,7 @@ import {
 } from '@/core/helpers/numberFormatHelper';
 import { toBN } from 'web3-utils';
 import getTokenInfo from '@/core/helpers/tokenInfo';
-import WALLET_TYPES from '@/modules/access-wallet/common/walletTypes';
+// import WALLET_TYPES from '@/modules/access-wallet/common/walletTypes';
 import { fromBase } from '../../helpers/unit';
 
 const setCurrency = async function ({ commit }, val) {
@@ -99,15 +99,15 @@ const setTokenAndEthBalance = function ({
   };
 
   if (!isTokenBalanceApiSupported) {
-    const currentProvider = rootState.wallet.web3.eth.currentProvider;
+    /* const currentProvider = rootState.wallet.web3.eth.currentProvider;
     // Prevent the 'Invalid return values' error
     // when accessing new network on MetaMask
-    /* if (
+    if (
       rootState.wallet.identifier === WALLET_TYPES.WEB3_WALLET &&
       network.type.chainID !== parseInt(currentProvider.chainId)
     ) { 
       return;
-    }*/
+    }
     if (
       rootState.wallet.identifier !== WALLET_TYPES.WEB3_WALLET &&
       currentProvider.connection
@@ -116,7 +116,7 @@ const setTokenAndEthBalance = function ({
       if (network.url !== currentProviderUrl) {
         dispatch('wallet/setWeb3Instance', undefined, { root: true });
       }
-    } 
+    }  */
     _getBalance();
     return;
   }

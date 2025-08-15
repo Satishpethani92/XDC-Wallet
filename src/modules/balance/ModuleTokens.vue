@@ -86,6 +86,7 @@
 </template>
 
 <script>
+// import { mapGetters, mapState, mapActions } from 'vuex';
 import { mapGetters, mapState } from 'vuex';
 import { uniqWith, isEqual } from 'lodash';
 import BigNumber from 'bignumber.js';
@@ -93,6 +94,14 @@ import { ROUTES_WALLET } from '@/core/configs/configRoutes';
 import { currencyToNumber } from '@/core/helpers/localization';
 import handlerAnalytics from '@/modules/analytics-opt-in/handlers/handlerAnalytics.mixin';
 import { DASHBOARD } from '../analytics-opt-in/handlers/configs/events';
+import gamaImg from '../../assets/images/networks/gama.jpg';
+import lbtImg from '../../assets/images/networks/lbt.jpg';
+import dopuImg from '../../assets/images/networks/dopu.webp';
+import xswapImg from '../../assets/images/networks/xswap.webp';
+import zonImg from '../../assets/images/networks/zon.webp';
+import pliImg from '../../assets/images/networks/pli.webp';
+import cgoImg from '../../assets/images/networks/cgo.webp';
+import srxImg from '../../assets/images/networks/srx.webp';
 
 export default {
   components: {
@@ -136,42 +145,70 @@ export default {
         }
       ],
       selectedToken: {},
-      // [MODIFIED] Switched from 'coingeckoId' to 'coingeckoId'
       xrc20Tokens: [
         {
           symbol: 'DOPU',
           contract: '0x8b20C72f1B138A41D2193dd056E117dce915ba8b',
           decimals: 18,
           name: 'Dog With Purpose',
-          coingeckoId: 'dog-with-purpose'
+          coingeckoId: 'dog-with-purpose',
+          disableSwap: true
         },
         {
           symbol: 'GAMA',
           contract: '0x3a170c7c987f55c84f28733bfa27962d8cdd5d3b',
           decimals: 18,
           name: 'Gama Token',
-          coingeckoId: 'gama-token'
-        },
-        {
-          symbol: 'BBB',
-          contract: '0xFa4dDcFa8E3d0475f544d0de469277CF6e0A6Fd1',
-          decimals: 18,
-          name: 'Beny Bad Boy',
-          coingeckoId: 'beny-bad-boy'
+          coingeckoId: 'gama-token',
+          disableSwap: true
         },
         {
           symbol: 'LBT',
           contract: '0x05940B2dF33D6371201e7Ae099CeD4C363855dFE',
           decimals: 18,
           name: 'Law Blocks',
-          coingeckoId: 'law-blocks'
+          coingeckoId: 'law-blocks',
+          disableSwap: true
         },
         {
           symbol: 'SRX',
           contract: '0x5d5f074837f5d4618b3916ba74de1bf9662a3fed',
           decimals: 18,
           name: 'StorX',
-          coingeckoId: 'storx'
+          coingeckoId: 'storx',
+          disableSwap: true
+        },
+        {
+          symbol: 'CGO',
+          contract: '0x8f9920283470f52128bf11b0c14e798be704fd15',
+          decimals: 18,
+          name: 'Comtech Gold',
+          coingeckoId: 'comtech-gold',
+          disableSwap: true
+        },
+        {
+          symbol: 'XSP',
+          contract: '0x36726235dadbdb4658d33e62a249dca7c4b2bc68',
+          decimals: 18,
+          name: 'XSwap Protocol',
+          coingeckoId: 'xswap-protocol',
+          disableSwap: true
+        },
+        {
+          symbol: 'ZON',
+          contract: '0x25d29fa7cf5cd5a11102b793f1a0149546e026e4',
+          decimals: 18,
+          name: 'Zon Token',
+          coingeckoId: 'zon-token',
+          disableSwap: true
+        },
+        {
+          symbol: 'PLI',
+          contract: '0xff7412ea7c8445c46a8254dfb557ac1e48094391',
+          decimals: 18,
+          name: 'Plugin',
+          coingeckoId: 'plugin',
+          disableSwap: true
         }
       ]
     };
@@ -235,16 +272,32 @@ export default {
         ...tokenList,
         ...this.xrc20TokenDetails
       ];
-      allTokens.sort((a, b) => b.usdBalance - a.usdBalance);
-      console.log('allTokens', allTokens);
 
+      allTokens.sort((a, b) => {
+        if (a.token === 'XDC' || a.token === 'TXDC') return -1;
+        if (b.token === 'XDC' || b.token === 'TXDC') return 1;
+
+        const aCap =
+          a.cap === 'N/A'
+            ? -Infinity
+            : parseFloat(a.cap.replace(/[^\d.-]/g, ''));
+        const bCap =
+          b.cap === 'N/A'
+            ? -Infinity
+            : parseFloat(b.cap.replace(/[^\d.-]/g, ''));
+
+        return bCap - aCap;
+      });
+
+      // allTokens.sort((a, b) => b.cap - a.cap);
       return allTokens;
     },
     totalTokensValue() {
-      const baseValue = new BigNumber(this.totalTokenFiatValue || 0);
+      return this.getFiatValue(this.totalTokenFiatValue);
+      /* const baseValue = new BigNumber(this.totalTokenFiatValue || 0);
       const xrc20Value = this.calculateXrc20TotalValue();
       const total = baseValue.plus(xrc20Value).toNumber();
-      return this.getFiatValue(total);
+      return this.getFiatValue(total); */
     }
   },
   watch: {
@@ -255,12 +308,12 @@ export default {
   },
   mounted() {
     this.startPriceUpdateInterval();
-    console.log('tokensData', this.tokensData);
   },
   beforeDestroy() {
     if (this.priceUpdateInterval) clearInterval(this.priceUpdateInterval);
   },
   methods: {
+    // ...mapActions('external', ['setTokenAndEthBalance']),
     async fetchAllXrc20Data() {
       if (!this.address) return;
       this.loadingXrc20 = true;
@@ -269,27 +322,20 @@ export default {
       this.loadingXrc20 = false;
     },
 
-    // [MODIFIED] This method now uses CoinCap
     async fetchXrc20TokenPrices() {
       this.loadingXrc20 = true;
-
-      // First try CoinGecko (free, no API key needed for basic usage)
       await this.fetchFromCoinGecko();
-
-      // Then fill any missing prices with alternative methods
       await this.fillMissingPrices();
-
+      // await this.setTokenAndEthBalance();
       this.loadingXrc20 = false;
     },
 
     async fetchFromCoinGecko() {
       try {
-        // Get all tokens that might have CoinGecko IDs
         const tokensWithPotentialIds = this.xrc20Tokens.filter(
           t => t.symbol && t.symbol.length > 0
         );
 
-        // Try to fetch all at once using the /coins/markets endpoint
         const symbols = tokensWithPotentialIds
           .map(t => t.symbol.toLowerCase())
           .join(',');
@@ -299,16 +345,11 @@ export default {
 
         if (res.ok) {
           const data = await res.json();
-          console.log('data', data);
-
           data.forEach(coin => {
             const symbolUpper = coin.symbol.toUpperCase();
-            console.log('symbolUpper', symbolUpper);
-
             const token = this.xrc20Tokens.find(
               t => t.symbol.toUpperCase() === symbolUpper
             );
-            console.log('token', token);
 
             if (token) {
               this.$set(this.xrc20TokenPrices, token.symbol, {
@@ -326,14 +367,12 @@ export default {
     },
 
     async fillMissingPrices() {
-      // For tokens not found on CoinGecko, try alternative methods
       const missingTokens = this.xrc20Tokens.filter(
         t => !this.xrc20TokenPrices[t.symbol]
       );
 
       if (missingTokens.length === 0) return;
 
-      // Try 1inch token API for contract addresses
       await Promise.all(
         missingTokens.map(async token => {
           try {
@@ -364,7 +403,6 @@ export default {
         })
       );
     },
-    // [REMOVED] fetchFromCoinGecko and fetchFromFallback are no longer needed.
 
     async getTokenBalance(contractAddress) {
       try {
@@ -396,7 +434,6 @@ export default {
             const balance = await this.getTokenBalance(token.contract);
             const balanceBN = new BigNumber(balance);
 
-            // Always return token info if we have price data, even if balance is 0
             if (this.xrc20TokenPrices[token.symbol] || balanceBN.gt(0)) {
               return this.formatXrc20Token(token, balance);
             }
@@ -409,9 +446,6 @@ export default {
 
         const resolvedTokens = await Promise.all(balancePromises);
         this.xrc20TokenDetails = resolvedTokens.filter(t => t !== null);
-
-        // Debug output
-        console.log('Final token details:', this.xrc20TokenDetails);
       } catch (error) {
         console.error('Error in fetchAndFormatXrc20Balances:', error);
       }
@@ -445,7 +479,7 @@ export default {
         price: priceData.price > 0 ? this.getFiatValue(priceData.price) : 'N/A',
         tokenImg: this.getXrc20TokenImage(token.symbol),
         callToAction:
-          this.hasSwap && balanceBN.gt(0)
+          this.hasSwap && balanceBN.gt(0) && !token.disableSwap
             ? [
                 {
                   title: 'Swap',
@@ -466,19 +500,22 @@ export default {
       };
     },
 
-    calculateXrc20TotalValue() {
+    /* calculateXrc20TotalValue() {
       return this.xrc20TokenDetails.reduce((total, token) => {
         return new BigNumber(total).plus(token.usdBalance).toNumber();
       }, 0);
-    },
+    }, */
 
     getXrc20TokenImage(symbol) {
       const tokenImages = {
-        DOPU: '',
-        GAMA: '',
-        BBB: '',
-        LBT: '',
-        SRX: ''
+        LBT: lbtImg,
+        CGO: cgoImg,
+        SRX: srxImg,
+        DOPU: dopuImg,
+        GAMA: gamaImg,
+        XSP: xswapImg,
+        ZON: zonImg,
+        PLI: pliImg
       };
       return tokenImages[symbol] || this.network.type.icon;
     },
@@ -527,7 +564,7 @@ export default {
         item.symbol == 'ETH'
           ? require('@/assets/images/networks/eth.svg')
           : item.img || this.network.type.icon;
-      if (this.hasSwap) {
+      if (this.hasSwap && !item.disableSwap) {
         newObj.callToAction = [
           {
             title: 'Swap',
