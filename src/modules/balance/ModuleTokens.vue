@@ -362,7 +362,7 @@ export default {
           });
         }
       } catch (e) {
-        console.error('CoinGecko API error:', e);
+        // console.error('CoinGecko API error:', e);
       }
     },
 
@@ -391,7 +391,7 @@ export default {
               });
             }
           } catch (e) {
-            console.error(`1inch API error for ${token.symbol}:`, e);
+            // console.error(`1inch API error for ${token.symbol}:`, e);
             // Final fallback if all APIs fail
             this.$set(this.xrc20TokenPrices, token.symbol, {
               price: 0.1,
@@ -439,7 +439,7 @@ export default {
             }
             return null;
           } catch (error) {
-            console.error(`Error processing ${token.symbol}:`, error);
+            // console.error(`Error processing ${token.symbol}:`, error);
             return null;
           }
         });
@@ -447,7 +447,7 @@ export default {
         const resolvedTokens = await Promise.all(balancePromises);
         this.xrc20TokenDetails = resolvedTokens.filter(t => t !== null);
       } catch (error) {
-        console.error('Error in fetchAndFormatXrc20Balances:', error);
+        // console.error('Error in fetchAndFormatXrc20Balances:', error);
       }
     },
 
