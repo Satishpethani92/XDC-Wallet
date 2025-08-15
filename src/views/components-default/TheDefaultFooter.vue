@@ -176,14 +176,14 @@
             </div>
           </div>
         </div>
-        <div class="col-12 footer__copyright d-none d-md-block">
+        <!-- <div class="col-12 footer__copyright d-none d-md-block">
           <p>
             <a
               :href="`https://github.com/MyEtherWallet/MyEtherWallet/releases/tag/v${packageVersion}`"
               >Version: v{{ packageVersion }}</a
             >
           </p>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -257,9 +257,9 @@ export default {
   computed: {
     ...mapState('popups', ['consentToTrack']),
     ...mapGetters('global', ['network']),
-    packageVersion() {
+    /* packageVersion() {
       return VERSION;
-    }
+    } */
   },
   methods: {
     trackCoinGecko() {

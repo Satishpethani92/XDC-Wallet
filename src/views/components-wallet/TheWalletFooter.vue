@@ -25,7 +25,7 @@
             <span v-else>{{ $t('footer.coingecko') }}</span>
           </div>
         </v-col>
-        <v-col
+        <!-- <v-col
           cols="12"
           md="4"
           lg="3"
@@ -51,8 +51,7 @@
               target="_blank"
               >Bug Bounty</a
             >
-            <!-- hide language select till translations are done-->
-            <!-- <span class="mx-5">|</span>
+            <span class="mx-5">|</span>
             <div style="max-width=200px">
               <v-select
                 v-model="onLanguage"
@@ -63,9 +62,9 @@
                 return-object
                 single-line
               ></v-select>
-            </div> -->
+            </div>
           </div>
-        </v-col>
+        </v-col> -->
       </v-row>
     </v-container>
   </v-footer>

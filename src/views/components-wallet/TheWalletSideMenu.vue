@@ -214,7 +214,7 @@
           />
         </div>
 
-        <div v-if="online" class="mt-3 px-8">
+        <!-- <div v-if="online" class="mt-3 px-8">
           <div class="d-flex align-center justify-space-between">
             <a
               :href="`https://github.com/MyEtherWallet/MyEtherWallet/releases/tag/v${version}`"
@@ -223,7 +223,7 @@
               >v{{ version }}</a
             >
           </div>
-        </div>
+        </div> -->
       </v-list>
     </v-navigation-drawer>
     <app-modal
@@ -282,7 +282,7 @@ import send from '@/assets/images/icons/icon-send.svg';
 import portfolio from '@/assets/images/icons/icon-dashboard-enable.svg';
 import stake from '@/assets/images/icons/icon-stake.svg';
 import nft from '@/assets/images/icons/icon-nft.svg';
-import swap from '@/assets/images/icons/icon-swap-enable.svg';
+// import swap from '@/assets/images/icons/icon-swap-enable.svg';
 import receive from '@/assets/images/icons/icon-arrow-down-right.svg';
 import buy from '@/assets/images/icons/icon-credit-card.svg';
 // import dapp from '@/assets/images/icons/icon-apps-enable.svg';
@@ -336,7 +336,7 @@ export default {
     return {
       isOpenNetworkOverlay: false,
       navOpen: null,
-      version: VERSION,
+      // version: VERSION,
       openQR: false,
       onSettings: false,
       showLogoutPopup: false,
@@ -458,12 +458,12 @@ export default {
       });
       if (this.online) {
         const sectionTwo = [
-          {
+          /* {
             title: this.$t('interface.menu.swap'),
             icon: swap,
             route: { name: ROUTES_WALLET.SWAP.NAME },
             fn: this.trackToSwap
-          },
+          }, */
           // {
           //   title: this.$t('interface.menu.bridge'),
           //   icon: bridge,
