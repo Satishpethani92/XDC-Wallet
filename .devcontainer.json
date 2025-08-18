@@ -7,7 +7,7 @@
     "octref.vetur",
     "ms-vscode-remote.remote-containers"
   ],
-  "appPort": ["8080:8080"],
+  "appPort": ["8000:8000"],
   "shutdownAction": "stopContainer",
   "postCreateCommand": "npm ci" // this ensures that new build will use package-lock.json
 }

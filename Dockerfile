@@ -13,4 +13,4 @@ RUN rm package-audit.js
 RUN rm -rf package*.json*
 WORKDIR /home
 
-EXPOSE 8080
+EXPOSE 8000

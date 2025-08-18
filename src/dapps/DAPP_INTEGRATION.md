@@ -34,7 +34,7 @@ The best way to start an integration is by creating a fork of MyEtherWallet and 
     # start
     $ npm run start
 
-    App should be running in https://localhost:8080
+    App should be running in https://localhost:8000
 
 Note: You can also use the offline version by opening `index.html` from the `dist` folder with your browser.
 

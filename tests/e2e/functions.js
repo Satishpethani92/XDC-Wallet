@@ -1,7 +1,7 @@
 exports.startBrowser = browser =>
   browser
     .init()
-    .url('https://localhost:8080')
+    .url('https://localhost:8000')
     .waitForElementVisible('#app')
     .assert.title('MyEtherWallet | MEW')
     // close enkrypt popup

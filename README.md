@@ -62,7 +62,7 @@ If you find a bug, or want a new feature added, please submit it on the [Github 
 ### To start the local dev environment, follow everything above and skip step 7
 
 1. start `npm run dev`
-2. App should be running in `https://localhost:8080`
+2. App should be running in `https://localhost:8000`
 
 EACCESS issue can be resolved by running: `sudo chown -R $(whoami) ~/.npm`
 

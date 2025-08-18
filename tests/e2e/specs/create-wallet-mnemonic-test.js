@@ -27,7 +27,7 @@ module.exports = {
     // start browser
     browser.windowMaximize();
     browser
-      .url('https://localhost:8080')
+      .url('https://localhost:8000')
       .waitForElementVisible('#app')
 
       // remove popups

@@ -20,7 +20,7 @@ const webpackConfig = {
     https: true,
     host: 'localhost',
     hotOnly: true,
-    port: 8080,
+    port: 8000,
     headers: {
       'Strict-Transport-Security':
         'max-age=63072000; includeSubdomains; preload',

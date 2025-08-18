@@ -18,7 +18,7 @@ module.exports = {
   'Access and Sign a sample transaction': async browser => {
     browser
       .init()
-      .url('https://localhost:8080')
+      .url('https://localhost:8000')
       .waitForElementVisible('#app')
       .assert.title('MyEtherWallet | MEW');
 

@@ -227,6 +227,9 @@ export default {
      * will be sorted by usd balance for both
      */
     tokensData() {
+      console.log("this.customTokens", this.customTokens);
+      console.log("this.hiddenTokens", this.hiddenTokens);
+      
       if (!this.tokensList && !this.customTokens && !this.hiddenTokens)
         return [];
       const customTokens = this.customTokens.reduce((arr, item) => {
