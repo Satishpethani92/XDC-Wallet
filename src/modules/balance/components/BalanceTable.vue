@@ -58,7 +58,7 @@
                 style="font-size: 12px; margin-top: -2px"
                 class="textLight--text"
               >
-                {{ td.balance[1] | concatSymbol }}
+                {{ td.balance[1] }}
               </div>
             </td>
             <td>

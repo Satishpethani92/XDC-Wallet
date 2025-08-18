@@ -13,7 +13,7 @@
       :title="totalTokensValue"
       class="bgWalletBlock"
     >
-      <!-- <template #rightHeaderContainer>
+      <template #rightHeaderContainer>
         <div>
           <v-menu
             bottom
@@ -47,7 +47,7 @@
             </v-list>
           </v-menu>
         </div>
-      </template> -->
+      </template>
       <template #moduleBody>
         <balance-table class="mb-4" :table-data="tokensData" />
       </template>
@@ -132,7 +132,7 @@ export default {
         { text: 'Balance', value: 'balance', sortable: false, width: '20%' },
         { text: '', value: 'callToAction', sortable: false, width: '10%' }
       ],
-      /* items: [
+      items: [
         {
           icon: 'mdi-plus',
           title: 'Add Token',
@@ -143,7 +143,7 @@ export default {
           title: 'Edit Token',
           action: this.toggleEditCustomToken
         }
-      ], */
+      ],
       selectedToken: {},
       xrc20Tokens: [
         {
@@ -247,6 +247,10 @@ export default {
       );
     },
     tokensData() {
+      console.log("this.tokensList", this.tokensList);
+      console.log("this.customTokens", this.customTokens);
+      console.log("this.hiddenTokens", this.hiddenTokens);
+      
       if (!this.tokensList && !this.customTokens && !this.hiddenTokens)
         return [];
 
@@ -257,7 +261,8 @@ export default {
         if (!isHidden) arr.push(this.formatValues(item));
         return arr;
       }, []);
-
+      console.log("customTokens", customTokens);
+      
       const uniqueTokens = uniqWith(
         this.tokensList.filter(t => !t.isHidden),
         isEqual
@@ -294,11 +299,11 @@ export default {
       return allTokens;
     },
     totalTokensValue() {
-      return this.getFiatValue(this.totalTokenFiatValue);
-      /* const baseValue = new BigNumber(this.totalTokenFiatValue || 0);
+      // return this.getFiatValue(this.totalTokenFiatValue);
+      const baseValue = new BigNumber(this.totalTokenFiatValue || 0);
       const xrc20Value = this.calculateXrc20TotalValue();
       const total = baseValue.plus(xrc20Value).toNumber();
-      return this.getFiatValue(total); */
+      return this.getFiatValue(total);
     }
   },
   watch: {
@@ -502,11 +507,11 @@ export default {
       };
     },
 
-    /* calculateXrc20TotalValue() {
+    calculateXrc20TotalValue() {
       return this.xrc20TokenDetails.reduce((total, token) => {
         return new BigNumber(total).plus(token.usdBalance).toNumber();
       }, 0);
-    }, */
+    },
 
     getXrc20TokenImage(symbol) {
       const tokenImages = {
