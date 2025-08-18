@@ -34,14 +34,14 @@
             />
           </div>
         </v-card>
-        <img
+        <!-- <img
           src="@/assets/images/backgrounds/bg-home-spaceman-and-dog.svg"
           alt="Spaceman and his dog"
           height="500"
-        />
+        /> -->
       </v-container>
     </div>
-    <div class="mobile-content d-block d-lg-none expandHeader pt-5">
+    <div class="mobile-content d-block d-lg-none expandHeader">
       <v-container>
         <v-card color="transparent" flat tile max-width="400px" class="mx-auto">
           <div
@@ -131,7 +131,7 @@ export default {
       this.trackLandingPageAmplitude(LANDING_PAGE.APPLE_STORE);
       this.openMewWallet();
     }, */
-   /*  trackOpenEnkrypt() {
+    /*  trackOpenEnkrypt() {
       this.trackLandingPageAmplitude(COMMON.GOOGLE_STORE);
     }, */
     navigateToCreateWallet() {
@@ -163,10 +163,10 @@ export default {
 }
 
 .mobile-content {
-  background-image: url('~@/assets/images/backgrounds/bg-homepage-spaceman-center.svg');
-  background-position: bottom center;
-  background-size: 88rem;
-  padding: 0 0 30rem 0;
+  padding: 10rem 0;
+  background-image: url(~@/assets/images/backgrounds/bg-homepage.svg);
+  background-size: cover;
+  background-position: 100% bottom;
 }
 
 .extension-btns {

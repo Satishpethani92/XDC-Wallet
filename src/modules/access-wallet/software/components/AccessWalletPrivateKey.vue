@@ -21,12 +21,12 @@
     -->
     <div class="text-center">
       <mew-checkbox v-model="invis" class="checkbox" />
-      <!-- <mew-checkbox
+      <mew-checkbox
         v-model="acceptTerms"
         :label="label"
         :link="link"
         class="justify-center PrivateKeyTerms"
-      /> -->
+      />
       <v-row dense class="align-center justify-center pt-4">
         <v-col cols="12" sm="4">
           <mew-button

@@ -256,7 +256,7 @@ export default {
   },
   computed: {
     ...mapState('popups', ['consentToTrack']),
-    ...mapGetters('global', ['network']),
+    ...mapGetters('global', ['network'])
     /* packageVersion() {
       return VERSION;
     } */
@@ -425,6 +425,15 @@ export default {
 
       .screen-tablet-portaint({
         margin-bottom: 12px;
+      });
+      .screen-mobile({
+        height: 35px;
+        width: 35px;
+
+        svg {
+          height: 35px;
+        width: 35px;
+        }
       });
     }
   }

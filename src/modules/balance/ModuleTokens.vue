@@ -265,6 +265,7 @@ export default {
 
       const tokenList = uniqueTokens
         .filter(item => item && item.balance && BigNumber(item.balance).gt(0))
+        // .filter(item => item)
         .map(item => this.formatValues(item));
 
       const allTokens = [
