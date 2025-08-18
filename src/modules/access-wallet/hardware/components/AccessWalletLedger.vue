@@ -65,7 +65,7 @@
         <div class="mew-label mb-10 label">All Ledgers</div>
       </div>
     </div>
-    <div>
+    <!-- <div>
       <mew-alert
         class="mt-5"
         title="Device not showing when pairing on Google Chrome?"
@@ -74,7 +74,7 @@
         hide-close-icon
         :link-object="article"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -107,14 +107,14 @@ export default {
       default: () => {}
     }
   },
-  data() {
+  /* data() {
     return {
       article: {
         text: 'See article here for instructions',
         url: 'https://winaero.com/enable-or-disable-bluetooth-device-permissions-in-google-chrome/'
       }
     };
-  },
+  }, */
   computed: {
     ...mapGetters('wallet', ['getLedgerApp', 'initialLoad']),
     modifiedLedgerApps() {
