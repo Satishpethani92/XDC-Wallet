@@ -1,8 +1,6 @@
 import app from './mainApp';
 import '@/assets/fonts/MaterialDesignIcons/css/materialdesignicons.min.css';
 import '@/assets/fonts/Roboto/css/Roboto.css';
-import localStore from 'store';
-import Configs from '../core/store/configs';
 import './sentry';
 import './components';
 
@@ -100,7 +98,6 @@ new Vue({
   beforeCreate() {
     // Commit the mutation
     this.$store.commit('custom/INIT_STORE');
-
     const userId = this.$route.query.intercomid
       ? this.$route.query.intercomid
       : uuidv4();

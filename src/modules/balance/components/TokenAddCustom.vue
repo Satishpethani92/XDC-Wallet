@@ -139,6 +139,7 @@ import abiERC20 from '../handlers/abiERC20';
 import { ERROR, SUCCESS, Toast } from '@/modules/toast/handler/handlerToast';
 import { isAddress } from '@/core/helpers/addressUtils';
 import { formatFloatingPointValue } from '@/core/helpers/numberFormatHelper';
+import xrc20Tokens from '../../xrc20Tokens';
 
 export default {
   props: {
@@ -160,7 +161,8 @@ export default {
       nameLengthTooLong: '',
       loading: false,
       step: 1,
-      token: {}
+      token: {},
+      xrc20Tokens
     };
   },
   computed: {
@@ -350,13 +352,15 @@ export default {
      */
     checkIfTokenExistsAlready() {
       let foundToken = false;
-      this.customTokens.concat(this.tokensList).find(token => {
-        if (
-          this.contractAddress.toLowerCase() === token.contract?.toLowerCase()
-        ) {
-          foundToken = true;
-        }
-      });
+      this.customTokens
+        .concat(this.tokensList, this.xrc20Tokens)
+        .find(token => {
+          if (
+            this.contractAddress.toLowerCase() === token.contract?.toLowerCase()
+          ) {
+            foundToken = true;
+          }
+        });
       if (foundToken) {
         this.contractAddress = '';
         this.loading = false;

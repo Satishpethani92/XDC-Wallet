@@ -203,6 +203,8 @@ import { MAIN_TOKEN_ADDRESS } from '@/core/helpers/common';
 import buyMore from '@/core/mixins/buyMore.mixin.js';
 import { fromBase, toBase } from '@/core/helpers/unit';
 import SendTransaction from '@/modules/send/handlers/handlerSend';
+import xrc20Tokens from '../xrc20Tokens.js';
+import xrc20Abi from '../../modules/swap/handlers/abi/xrc20';
 
 export default {
   components: {
@@ -252,11 +254,12 @@ export default {
       gasEstimationError: '',
       gasEstimationIsReady: false,
       localGasPrice: '0',
-      selectedMax: false
+      selectedMax: false,
+      xrc20Tokens
     };
   },
   computed: {
-    ...mapState('wallet', ['address', 'instance', 'identifier']),
+    ...mapState('wallet', ['address', 'instance', 'identifier', 'web3']),
     ...mapState('global', ['preferredCurrency']),
     ...mapGetters('global', [
       'network',
@@ -352,19 +355,13 @@ export default {
      * Formats each token to be used in mew-select
      */
     tokens() {
+      // console.log("this.customTokens", this.customTokens);
       // no ref copy
       const tokensList = this.tokensList.slice().filter(t => {
         return !t.isHidden;
       });
-      const customTokens = this.customTokens.reduce((arr, item) => {
-        // Check if token is in hiddenTokens
-        const isHidden = this.hiddenTokens.find(token => {
-          return item.contract == token.address;
-        });
-        item.decimals = BigNumber(item.decimals).toNumber();
-        if (!isHidden) arr.push(item);
-        return arr;
-      }, []);
+
+      // handle imgs for top section
       const imgs = tokensList.map(item => {
         item.totalBalance = this.getFiatValue(item.usdBalancef);
         item.tokenBalance = item.balancef;
@@ -374,6 +371,8 @@ export default {
         item.name = item.symbol;
         return item.img;
       });
+
+      // if wallet has no ETH
       BigNumber(this.balanceInETH).lte(0)
         ? tokensList.unshift({
             hasNoEth: true,
@@ -383,6 +382,8 @@ export default {
             link: this.isEthNetwork ? this.swapLink : ''
           })
         : null;
+
+      // base returned list
       const returnedArray = [
         {
           text: 'Select Token',
@@ -396,16 +397,47 @@ export default {
         },
         ...tokensList
       ];
-      if (customTokens.length > 0) {
-        return returnedArray.concat([
-          {
-            header: 'Custom Tokens'
-          },
-          ...customTokens
-        ]);
+
+      // add XRC20 tokens section
+      if (this.xrc20Tokens && this.xrc20Tokens.length > 0) {
+        const xrc20WithBalances = this.xrc20Tokens.map(token => ({
+          ...token,
+          totalBalance: token.usdBalancef || '$0.00',
+          tokenBalance: token.balancef || '0',
+          price: token.pricef || '0',
+          subtext: token.name,
+          value: token.contract,
+          name: token.symbol,
+          img: token.image
+        }));
+
+        returnedArray.push({
+          header: 'XRC20 Tokens'
+        });
+        returnedArray.push(...xrc20WithBalances);
       }
+
+      // handle custom tokens
+      const customTokens = this.customTokens.reduce((arr, item) => {
+        const isHidden = this.hiddenTokens.find(token => {
+          return item.contract == token.address;
+        });
+        item.decimals = BigNumber(item.decimals).toNumber();
+        if (!isHidden) arr.push(item);
+        return arr;
+      }, []);
+
+      // add custom tokens if available
+      if (customTokens.length > 0) {
+        returnedArray.push({
+          header: 'Custom Tokens'
+        });
+        returnedArray.push(...customTokens);
+      }
+
       return returnedArray;
     },
+
     /* Property returns either gas estimmation error or amount error*/
     amountErrorMessage() {
       return this.gasEstimationError !== '' && this.sendTx?.hasEnoughBalance()
@@ -556,6 +588,9 @@ export default {
         this.debounceEstimateGas();
       }
     },
+    web3(newVal) {
+      if (newVal) this.fetchXRC20Balances();
+    },
     isPrefilled() {
       this.prefillForm();
     },
@@ -623,15 +658,18 @@ export default {
         }
       }, 500);
     },
-    address() {
+    address(newVal) {
       this.clear();
       this.debounceAmountError('0');
+      if (newVal) this.fetchXRC20Balances();
     },
     txFeeETH(newVal) {
       if (!isEmpty(this.selectedCurrency)) this.localGasPriceWatcher(newVal);
     }
   },
-  mounted() {
+  async mounted() {
+    await this.fetchXRC20Balances();
+    this.fetchFromCoinGecko();
     this.setSendTransaction();
     this.gasLimit = this.prefilledGasLimit;
     this.selectedCurrency = this.tokensList[0];
@@ -652,6 +690,82 @@ export default {
     }, 500);
   },
   methods: {
+    async fetchFromCoinGecko() {
+      try {
+        const ids = this.xrc20Tokens
+          .filter(t => t.coingeckoId)
+          .map(t => t.coingeckoId)
+          .join(',');
+
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}`
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          this.xrc20Tokens = this.xrc20Tokens.map(token => {
+            const coinData = data.find(c => c.id === token.coingeckoId);
+            if (!coinData) return token;
+
+            const price = coinData.current_price || 0;
+            const balance = token.balance
+              ? parseFloat(fromBase(token.balance, token.decimals))
+              : 0;
+
+            const usdBalance = balance * price;
+
+            return {
+              ...token,
+              price: `$${price.toFixed(2)}`,
+              pricef: `$${price.toFixed(2)}`,
+              usdBalance: usdBalance.toString(),
+              usdBalancef: `$${usdBalance.toFixed(2)}`,
+              market_cap: coinData.market_cap || 0,
+              market_capf: coinData.market_cap
+                ? `$${(coinData.market_cap / 1e9).toFixed(2)}B`
+                : 'N/A',
+              price_change_percentage_24h:
+                coinData.price_change_percentage_24h || 0,
+              price_change_percentage_24hf: coinData.price_change_percentage_24h
+                ? `${coinData.price_change_percentage_24h.toFixed(2)}%`
+                : '0%',
+              img: coinData.image || token.img
+            };
+          });
+        }
+      } catch (e) {
+        // console.error('CoinGecko API error:', e);
+      }
+    },
+    async fetchXRC20Balances() {
+      if (!this.address || !this.web3) return;
+
+      const balances = await Promise.all(
+        this.xrc20Tokens.map(async token => {
+          try {
+            const contract = new this.web3.eth.Contract(
+              xrc20Abi,
+              token.contract
+            );
+            const balance = await contract.methods
+              .balanceOf(this.address)
+              .call();
+            const decimals = await contract.methods.decimals().call();
+
+            return {
+              ...token,
+              balance: balance.toString(),
+              balancef: fromBase(balance, decimals), // Formatted balance
+              decimals: parseInt(decimals)
+            };
+          } catch (e) {
+            return token; // Fallback to original token data
+          }
+        })
+      );
+
+      this.xrc20Tokens = balances;
+    },
     localGasPriceWatcher(newVal) {
       const total = BigNumber(newVal).plus(this.amount);
       const amt = toBase(this.amount, this.selectedCurrency?.decimals);

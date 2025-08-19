@@ -466,7 +466,6 @@ export default {
   },
   mounted() {
     this.setupNameResolver();
-    // this.refresh();
   },
   methods: {
     ...mapActions('external', ['setTokenAndEthBalance']),
