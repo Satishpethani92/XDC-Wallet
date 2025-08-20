@@ -267,7 +267,7 @@
         <app-btn-menu class="mr-3" @click.native="openNavigation" />
 
         <router-link :to="offlineModeRoute" style="line-height: 0">
-          <img width="26" src="@/assets/images/logo/xdc-wallet-logo.png" />
+          <img width="65" src="@/assets/images/logo/xdc-wallet-logo.png" />
         </router-link>
         <v-spacer />
         <module-notifications v-if="!isOfflineApp" invert-icon />
