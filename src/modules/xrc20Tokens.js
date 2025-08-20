@@ -1,12 +1,3 @@
-import gamaImg from '../assets/images/networks/gama.jpg';
-import lbtImg from '../assets/images/networks/lbt.jpg';
-import dopuImg from '../assets/images/networks/dopu.webp';
-import xswapImg from '../assets/images/networks/xswap.webp';
-import zonImg from '../assets/images/networks/zon.webp';
-import pliImg from '../assets/images/networks/pli.webp';
-import cgoImg from '../assets/images/networks/cgo.webp';
-import srxImg from '../assets/images/networks/srx.webp';
-
 export default [
   {
     symbol: 'DOPU',
@@ -14,8 +5,7 @@ export default [
     decimals: 18,
     name: 'Dog With Purpose',
     coingeckoId: 'dog-with-purpose',
-    disableSwap: true,
-    image: dopuImg
+    disableSwap: true
   },
   {
     symbol: 'GAMA',
@@ -23,8 +13,7 @@ export default [
     decimals: 18,
     name: 'Gama Token',
     coingeckoId: 'gama-token',
-    disableSwap: true,
-    image: gamaImg
+    disableSwap: true
   },
   {
     symbol: 'LBT',
@@ -32,8 +21,7 @@ export default [
     decimals: 18,
     name: 'Law Blocks',
     coingeckoId: 'law-blocks',
-    disableSwap: true,
-    image: lbtImg
+    disableSwap: true
   },
   {
     symbol: 'SRX',
@@ -41,8 +29,7 @@ export default [
     decimals: 18,
     name: 'StorX',
     coingeckoId: 'storx',
-    disableSwap: true,
-    image: srxImg
+    disableSwap: true
   },
   {
     symbol: 'CGO',
@@ -50,8 +37,7 @@ export default [
     decimals: 18,
     name: 'Comtech Gold',
     coingeckoId: 'comtech-gold',
-    disableSwap: true,
-    image: cgoImg
+    disableSwap: true
   },
   {
     symbol: 'XSP',
@@ -59,8 +45,7 @@ export default [
     decimals: 18,
     name: 'XSwap Protocol',
     coingeckoId: 'xswap-protocol',
-    disableSwap: true,
-    image: xswapImg
+    disableSwap: true
   },
   {
     symbol: 'ZON',
@@ -68,8 +53,7 @@ export default [
     decimals: 18,
     name: 'Zon Token',
     coingeckoId: 'zon-token',
-    disableSwap: true,
-    image: zonImg
+    disableSwap: true
   },
   {
     symbol: 'PLI',
@@ -77,7 +61,6 @@ export default [
     decimals: 18,
     name: 'Plugin',
     coingeckoId: 'plugin',
-    disableSwap: true,
-    image: pliImg
+    disableSwap: true
   }
 ];

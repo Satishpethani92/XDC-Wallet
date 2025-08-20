@@ -255,7 +255,8 @@ export default {
       gasEstimationIsReady: false,
       localGasPrice: '0',
       selectedMax: false,
-      xrc20Tokens
+      xrc20Tokens,
+      tokenPrices: {} // To store prices for all tokens
     };
   },
   computed: {
@@ -355,7 +356,6 @@ export default {
      * Formats each token to be used in mew-select
      */
     tokens() {
-      // console.log("this.customTokens", this.customTokens);
       // no ref copy
       const tokensList = this.tokensList.slice().filter(t => {
         return !t.isHidden;
@@ -398,32 +398,44 @@ export default {
         ...tokensList
       ];
 
-      // add XRC20 tokens section
-      if (this.xrc20Tokens && this.xrc20Tokens.length > 0) {
-        const xrc20WithBalances = this.xrc20Tokens.map(token => ({
-          ...token,
-          totalBalance: token.usdBalancef || '$0.00',
-          tokenBalance: token.balancef || '0',
-          price: token.pricef || '0',
-          subtext: token.name,
-          value: token.contract,
-          name: token.symbol,
-          img: token.image
-        }));
 
-        returnedArray.push({
-          header: 'XRC20 Tokens'
-        });
-        returnedArray.push(...xrc20WithBalances);
-      }
-
-      // handle custom tokens
+      // add custom tokens section
       const customTokens = this.customTokens.reduce((arr, item) => {
-        const isHidden = this.hiddenTokens.find(token => {
-          return item.contract == token.address;
-        });
-        item.decimals = BigNumber(item.decimals).toNumber();
-        if (!isHidden) arr.push(item);
+        const isHidden = this.hiddenTokens.find(
+          token => item.contract == token.address
+        );
+        if (isHidden) return arr;
+
+        const priceData = this.tokenPrices[item.contract || item.symbol];
+        const enrichedToken = { ...item };
+        enrichedToken.decimals = BigNumber(item.decimals).toNumber();
+
+        if (priceData) {
+          const balance = fromBase(
+            enrichedToken.balance || '0',
+            enrichedToken.decimals
+          );
+          const usdBalance = new BigNumber(balance)
+            .times(priceData.price)
+            .toFixed(2);
+          enrichedToken.totalBalance = this.getFiatValue(usdBalance);
+          enrichedToken.tokenBalance = balance;
+          enrichedToken.price = this.getFiatValue(priceData.price);
+          enrichedToken.img = priceData.image || enrichedToken.img;
+        } else {
+          enrichedToken.totalBalance = '$0.00';
+          enrichedToken.tokenBalance = fromBase(
+            enrichedToken.balance || '0',
+            enrichedToken.decimals
+          );
+          enrichedToken.price = '$0.00';
+        }
+
+        enrichedToken.subtext = enrichedToken.name;
+        enrichedToken.value = enrichedToken.contract;
+        enrichedToken.name = enrichedToken.symbol;
+
+        arr.push(enrichedToken);
         return arr;
       }, []);
 
@@ -433,6 +445,39 @@ export default {
           header: 'Custom Tokens'
         });
         returnedArray.push(...customTokens);
+      }
+
+      // add XRC20 tokens section
+      if (this.xrc20Tokens && this.xrc20Tokens.length > 0) {
+        const xrc20WithBalances = this.xrc20Tokens.map(token => {
+          const enrichedToken = { ...token };
+          const priceData = this.tokenPrices[token.contract];
+
+          if (priceData) {
+            const balance = token.balancef || '0';
+            const usdBalance = new BigNumber(balance)
+              .times(priceData.price)
+              .toFixed(2);
+            enrichedToken.totalBalance = this.getFiatValue(usdBalance);
+            enrichedToken.price = this.getFiatValue(priceData.price);
+            enrichedToken.img = priceData.image || enrichedToken.image;
+          } else {
+            enrichedToken.totalBalance = '$0.00';
+            enrichedToken.price = '$0.00';
+          }
+
+          enrichedToken.tokenBalance = token.balancef || '0';
+          enrichedToken.subtext = token.name;
+          enrichedToken.value = token.contract;
+          enrichedToken.name = token.symbol;
+
+          return enrichedToken;
+        });
+
+        returnedArray.push({
+          header: 'XRC20 Tokens'
+        });
+        returnedArray.push(...xrc20WithBalances);
       }
 
       return returnedArray;
@@ -661,15 +706,22 @@ export default {
     address(newVal) {
       this.clear();
       this.debounceAmountError('0');
-      if (newVal) this.fetchXRC20Balances();
+      if (newVal) {
+        this.fetchXRC20Balances();
+        this.fetchAllTokenPrices();
+      }
     },
     txFeeETH(newVal) {
       if (!isEmpty(this.selectedCurrency)) this.localGasPriceWatcher(newVal);
+    },
+    customTokens: {
+      handler: 'fetchAllTokenPrices',
+      deep: true
     }
   },
   async mounted() {
     await this.fetchXRC20Balances();
-    this.fetchFromCoinGecko();
+    this.fetchAllTokenPrices();
     this.setSendTransaction();
     this.gasLimit = this.prefilledGasLimit;
     this.selectedCurrency = this.tokensList[0];
@@ -690,47 +742,46 @@ export default {
     }, 500);
   },
   methods: {
-    async fetchFromCoinGecko() {
+    async fetchAllTokenPrices() {
+      const allTokens = [...this.xrc20Tokens, ...this.customTokens];
+      await this.fetchFromCoinGecko(allTokens);
+    },
+    async fetchFromCoinGecko(tokensToFetch) {
       try {
-        const ids = this.xrc20Tokens
-          .filter(t => t.coingeckoId)
-          .map(t => t.coingeckoId)
-          .join(',');
+        const tokensWithPotentialIds = tokensToFetch.filter(
+          t => t.symbol && t.symbol.length > 0
+        );
+
+        if (tokensWithPotentialIds.length === 0) return;
+
+        const symbols = [
+          ...new Set(tokensWithPotentialIds.map(t => t.symbol.toLowerCase()))
+        ].join(',');
 
         const res = await fetch(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}`
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&symbols=${symbols}`
         );
 
         if (res.ok) {
           const data = await res.json();
-          this.xrc20Tokens = this.xrc20Tokens.map(token => {
-            const coinData = data.find(c => c.id === token.coingeckoId);
-            if (!coinData) return token;
+          data.forEach(coin => {
+            const symbolUpper = coin.symbol.toUpperCase();
+            const matchingTokens = tokensToFetch.filter(
+              t => t.symbol.toUpperCase() === symbolUpper
+            );
 
-            const price = coinData.current_price || 0;
-            const balance = token.balance
-              ? parseFloat(fromBase(token.balance, token.decimals))
-              : 0;
-
-            const usdBalance = balance * price;
-
-            return {
-              ...token,
-              price: `$${price.toFixed(2)}`,
-              pricef: `$${price.toFixed(2)}`,
-              usdBalance: usdBalance.toString(),
-              usdBalancef: `$${usdBalance.toFixed(2)}`,
-              market_cap: coinData.market_cap || 0,
-              market_capf: coinData.market_cap
-                ? `$${(coinData.market_cap / 1e9).toFixed(2)}B`
-                : 'N/A',
-              price_change_percentage_24h:
-                coinData.price_change_percentage_24h || 0,
-              price_change_percentage_24hf: coinData.price_change_percentage_24h
-                ? `${coinData.price_change_percentage_24h.toFixed(2)}%`
-                : '0%',
-              img: coinData.image || token.img
-            };
+            if (matchingTokens.length > 0) {
+              matchingTokens.forEach(token => {
+                const key = token.contract || token.symbol;
+                this.$set(this.tokenPrices, key, {
+                  price: coin.current_price || 0,
+                  change24h: coin.price_change_percentage_24h || 0,
+                  marketCap: coin.market_cap || 0,
+                  image: coin.image,
+                  source: 'coingecko'
+                });
+              });
+            }
           });
         }
       } catch (e) {
