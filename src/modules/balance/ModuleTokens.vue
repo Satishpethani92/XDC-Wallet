@@ -373,7 +373,8 @@ export default {
             : 'N/A',
         change: priceData.change24h ? priceData.change24h.toFixed(2) : '0.00',
         status: priceData.change24h >= 0 ? '+' : '-',
-        price: priceData.price > 0 ? this.getFiatValue(priceData.price) : 'N/A',
+        price:
+          priceData.price > 0 ? this.getFiatValue(priceData.price) : '$0.00',
         tokenImg: priceData.image || token.image,
         /* callToAction:
           this.hasSwap && balanceBN.gt(0) && !token.disableSwap
@@ -441,7 +442,7 @@ export default {
           : '0.00';
         newObj.status = priceData.change24h >= 0 ? '+' : '-';
         newObj.price =
-          priceData.price > 0 ? this.getFiatValue(priceData.price) : 'N/A';
+          priceData.price > 0 ? this.getFiatValue(priceData.price) : '$0.00';
       } else {
         newObj.balance = [
           item.balancef
@@ -461,7 +462,7 @@ export default {
         newObj.price =
           item.pricef && priceUF.toString() !== '0'
             ? this.getFiatValue(item.pricef)
-            : 'N/A';
+            : '$0.00';
       }
 
       newObj.token = item.symbol;
