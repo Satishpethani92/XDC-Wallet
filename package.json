@@ -49,7 +49,7 @@
     "@coolwallets/eth": "0.2.0-beta.1",
     "@coolwallets/transport-web-ble": "0.1.0",
     "@coolwallets/wallet": "0.2.0-beta.1",
-    "@ensdomains/address-encoder": "1.1.2",
+    "@ensdomains/address-encoder": "1.1.3",
     "@ensdomains/ens-contracts": "1.1.4",
     "@ensdomains/ensjs": "2.1.0",
     "@ethereumjs/common": "2.6.5",

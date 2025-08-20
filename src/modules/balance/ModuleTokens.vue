@@ -112,9 +112,9 @@ export default {
       openAddCustomToken: false,
       openEditCustomToken: false,
       openRemoveCustomToken: false,
-      xrc20TokenPrices: {},
+      tokenPrices: {},
       xrc20TokenDetails: [],
-      loadingXrc20: false,
+      loadingTokens: false,
       priceUpdateInterval: null,
       tableHeaders: [
         { text: 'Token', value: 'token', sortable: false, width: '20%' },
@@ -158,7 +158,7 @@ export default {
     ]),
     ...mapGetters('external', ['totalTokenFiatValue']),
     loading() {
-      return this.loadingWalletInfo || this.loadingXrc20;
+      return this.loadingWalletInfo || this.loadingTokens;
     },
     hasTokens() {
       return (
@@ -174,10 +174,6 @@ export default {
       );
     },
     tokensData() {
-      // console.log('this.tokensList', this.tokensList);
-      // console.log('this.customTokens', this.customTokens);
-      // console.log('this.hiddenTokens', this.hiddenTokens);
-
       if (!this.tokensList && !this.customTokens && !this.hiddenTokens)
         return [];
 
@@ -188,7 +184,6 @@ export default {
         if (!isHidden) arr.push(this.formatValues(item));
         return arr;
       }, []);
-      // console.log('customTokens', customTokens);
 
       const uniqueTokens = uniqWith(
         this.tokensList.filter(t => !t.isHidden),
@@ -221,22 +216,25 @@ export default {
 
         return bCap - aCap;
       });
-
       // allTokens.sort((a, b) => b.cap - a.cap);
       return allTokens;
     },
     totalTokensValue() {
       // return this.getFiatValue(this.totalTokenFiatValue);
-      const baseValue = new BigNumber(this.totalTokenFiatValue || 0);
-      const xrc20Value = this.calculateXrc20TotalValue();
-      const total = baseValue.plus(xrc20Value).toNumber();
-      return this.getFiatValue(total);
+      const total = this.tokensData.reduce((acc, token) => {
+        return new BigNumber(acc).plus(token.usdBalance || 0);
+      }, new BigNumber(0));
+      return this.getFiatValue(total.toNumber());
     }
   },
   watch: {
     address: {
-      handler: 'fetchAllXrc20Data',
+      handler: 'fetchAllTokenData',
       immediate: true
+    },
+    customTokens: {
+      handler: 'fetchAllTokenData',
+      deep: true
     }
   },
   mounted() {
@@ -246,31 +244,33 @@ export default {
     if (this.priceUpdateInterval) clearInterval(this.priceUpdateInterval);
   },
   methods: {
-    async fetchAllXrc20Data() {
+    async fetchAllTokenData() {
       if (!this.address) return;
-      this.loadingXrc20 = true;
-      await this.fetchXrc20TokenPrices();
+      this.loadingTokens = true;
+      await this.fetchAllTokenPrices();
       await this.fetchAndFormatXrc20Balances();
-      this.loadingXrc20 = false;
+      this.loadingTokens = false;
     },
 
-    async fetchXrc20TokenPrices() {
-      this.loadingXrc20 = true;
-      await this.fetchFromCoinGecko();
-      await this.fillMissingPrices();
-      // await this.setTokenAndEthBalance();
-      this.loadingXrc20 = false;
+    async fetchAllTokenPrices() {
+      this.loadingTokens = true;
+      const allTokens = [...this.xrc20Tokens, ...this.customTokens];
+      await this.fetchFromCoinGecko(allTokens);
+      this.loadingTokens = false;
     },
 
-    async fetchFromCoinGecko() {
+    async fetchFromCoinGecko(tokensToFetch) {
       try {
-        const tokensWithPotentialIds = this.xrc20Tokens.filter(
+        const tokensWithPotentialIds = tokensToFetch.filter(
           t => t.symbol && t.symbol.length > 0
         );
 
-        const symbols = tokensWithPotentialIds
-          .map(t => t.symbol.toLowerCase())
-          .join(',');
+        if (tokensWithPotentialIds.length === 0) return;
+
+        const symbols = [
+          ...new Set(tokensWithPotentialIds.map(t => t.symbol.toLowerCase()))
+        ].join(',');
+
         const res = await fetch(
           `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&symbols=${symbols}`
         );
@@ -279,16 +279,20 @@ export default {
           const data = await res.json();
           data.forEach(coin => {
             const symbolUpper = coin.symbol.toUpperCase();
-            const token = this.xrc20Tokens.find(
+            const matchingTokens = tokensToFetch.filter(
               t => t.symbol.toUpperCase() === symbolUpper
             );
 
-            if (token) {
-              this.$set(this.xrc20TokenPrices, token.symbol, {
-                price: coin.current_price || 0,
-                change24h: coin.price_change_percentage_24h || 0,
-                marketCap: coin.market_cap || 0,
-                source: 'coingecko'
+            if (matchingTokens.length > 0) {
+              matchingTokens.forEach(token => {
+                const key = token.contract || token.symbol;
+                this.$set(this.tokenPrices, key, {
+                  price: coin.current_price || 0,
+                  change24h: coin.price_change_percentage_24h || 0,
+                  marketCap: coin.market_cap || 0,
+                  image: coin.image,
+                  source: 'coingecko'
+                });
               });
             }
           });
@@ -296,44 +300,6 @@ export default {
       } catch (e) {
         // console.error('CoinGecko API error:', e);
       }
-    },
-
-    async fillMissingPrices() {
-      const missingTokens = this.xrc20Tokens.filter(
-        t => !this.xrc20TokenPrices[t.symbol]
-      );
-
-      if (missingTokens.length === 0) return;
-
-      await Promise.all(
-        missingTokens.map(async token => {
-          try {
-            const res = await fetch(
-              `https://api.1inch.io/v4.0/1/tokens/${token.contract}`
-            );
-
-            if (res.ok) {
-              // const tokenData = await res.json();
-              // Simple fallback pricing (could be improved)
-              this.$set(this.xrc20TokenPrices, token.symbol, {
-                price: 0.1, // Default fallback price
-                change24h: 0,
-                marketCap: 0,
-                source: 'fallback-1inch'
-              });
-            }
-          } catch (e) {
-            // console.error(`1inch API error for ${token.symbol}:`, e);
-            // Final fallback if all APIs fail
-            this.$set(this.xrc20TokenPrices, token.symbol, {
-              price: 0.1,
-              change24h: 0,
-              marketCap: 0,
-              source: 'fallback-default'
-            });
-          }
-        })
-      );
     },
 
     async getTokenBalance(contractAddress) {
@@ -366,12 +332,11 @@ export default {
             const balance = await this.getTokenBalance(token.contract);
             const balanceBN = new BigNumber(balance);
 
-            if (this.xrc20TokenPrices[token.symbol] || balanceBN.gt(0)) {
+            if (this.tokenPrices[token.contract] || balanceBN.gt(0)) {
               return this.formatXrc20Token(token, balance);
             }
             return null;
           } catch (error) {
-            // console.error(`Error processing ${token.symbol}:`, error);
             return null;
           }
         });
@@ -384,7 +349,7 @@ export default {
     },
 
     formatXrc20Token(token, balance) {
-      const priceData = this.xrc20TokenPrices[token.symbol] || {
+      const priceData = this.tokenPrices[token.contract] || {
         price: 0,
         change24h: 0,
         marketCap: 0
@@ -409,7 +374,7 @@ export default {
         change: priceData.change24h ? priceData.change24h.toFixed(2) : '0.00',
         status: priceData.change24h >= 0 ? '+' : '-',
         price: priceData.price > 0 ? this.getFiatValue(priceData.price) : 'N/A',
-        tokenImg: token.image,
+        tokenImg: priceData.image || token.image,
         /* callToAction:
           this.hasSwap && balanceBN.gt(0) && !token.disableSwap
             ? [
@@ -433,12 +398,6 @@ export default {
       };
     },
 
-    calculateXrc20TotalValue() {
-      return this.xrc20TokenDetails.reduce((total, token) => {
-        return new BigNumber(total).plus(token.usdBalance).toNumber();
-      }, 0);
-    },
-
     formatNumber(num) {
       const bn = new BigNumber(num);
       if (bn.gte(1e6)) return bn.div(1e6).toFixed(2) + 'M';
@@ -455,34 +414,62 @@ export default {
 
     startPriceUpdateInterval() {
       this.priceUpdateInterval = setInterval(() => {
-        this.fetchAllXrc20Data();
+        this.fetchAllTokenData();
       }, 5 * 60 * 1000);
     },
 
     formatValues(item) {
+      const priceData = this.tokenPrices[item.contract || item.symbol];
       const newObj = {};
-      newObj.balance = [
-        item.balancef ? item.balancef + ' ' + item.symbol : '0 ' + item.symbol,
-        item.usdBalancef ? this.getFiatValue(item.usdBalancef) : '0'
-      ];
-      newObj.usdBalance = item.usdBalance || 0;
+
+      if (priceData) {
+        const balance = new BigNumber(item.balancef || item.balance || 0);
+        const usdBalance = balance.times(priceData.price).toNumber();
+        newObj.usdBalance = usdBalance;
+        newObj.balance = [
+          item.balancef
+            ? item.balancef + ' ' + item.symbol
+            : '0 ' + item.symbol,
+          usdBalance > 0 ? this.getFiatValue(usdBalance) : '$0.00'
+        ];
+        newObj.cap =
+          priceData.marketCap > 0
+            ? this.formatMarketCap(priceData.marketCap)
+            : 'N/A';
+        newObj.change = priceData.change24h
+          ? priceData.change24h.toFixed(2)
+          : '0.00';
+        newObj.status = priceData.change24h >= 0 ? '+' : '-';
+        newObj.price =
+          priceData.price > 0 ? this.getFiatValue(priceData.price) : 'N/A';
+      } else {
+        newObj.balance = [
+          item.balancef
+            ? item.balancef + ' ' + item.symbol
+            : '0 ' + item.symbol,
+          item.usdBalancef ? this.getFiatValue(item.usdBalancef) : '$0.00'
+        ];
+        newObj.usdBalance = item.usdBalance || 0;
+        newObj.cap = item.market_capf !== '0' ? item.market_capf : 'N/A';
+        newObj.change =
+          item.price_change_percentage_24hf &&
+          item.price_change_percentage_24hf !== '0'
+            ? item.price_change_percentage_24hf.replaceAll('%', '')
+            : '0.00';
+        newObj.status = item.price_change_percentage_24h > 0 ? '+' : '-';
+        const priceUF = currencyToNumber(item.pricef);
+        newObj.price =
+          item.pricef && priceUF.toString() !== '0'
+            ? this.getFiatValue(item.pricef)
+            : 'N/A';
+      }
+
       newObj.token = item.symbol;
-      newObj.cap = item.market_capf !== '0' ? item.market_capf : '';
-      newObj.change =
-        item.price_change_percentage_24hf &&
-        item.price_change_percentage_24hf !== '0'
-          ? item.price_change_percentage_24hf.replaceAll('%', '')
-          : '';
-      newObj.status = item.price_change_percentage_24h > 0 ? '+' : '-';
-      const priceUF = currencyToNumber(item.pricef);
-      newObj.price =
-        item.pricef && priceUF.toString() !== '0'
-          ? this.getFiatValue(item.pricef)
-          : '';
       newObj.tokenImg =
-        item.symbol == 'ETH'
+        (priceData && priceData.image) ||
+        (item.symbol == 'ETH'
           ? require('@/assets/images/networks/eth.svg')
-          : item.img || this.network.type.icon;
+          : item.img || this.network.type.icon);
       /* if (this.hasSwap && !item.disableSwap) {
         newObj.callToAction = [
           {
