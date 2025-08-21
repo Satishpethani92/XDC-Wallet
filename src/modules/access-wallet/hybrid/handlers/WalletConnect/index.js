@@ -14,10 +14,10 @@ import errorHandler from './errorHandler';
 import commonGenerator from '@/core/helpers/commonGenerator';
 import toBuffer from '@/core/helpers/toBuffer';
 import walletconnect from '@/assets/images/icons/wallets/walletconnect.svg';
-import { BASE, BSC, ETH, OP, POL, ARB } from '@/utils/networks/types';
+import { XDC } from '@/utils/networks/types';
 
 // eslint-disable-next-line
-const projectId = WALLET_CONNECT_PROJECT_ID;
+const projectId = process.env.VUE_APP_WALLET_CONNECT_PROJECT_ID;
 const IS_HARDWARE = false;
 class WalletConnectWallet {
   constructor(signClient, identifier) {
@@ -111,11 +111,11 @@ const createWallet = async (identifier = WALLET_TYPES.WALLET_CONNECT) => {
             }
           })
           .filter(item => !!item)
-      : [BSC.chainID, POL.chainID, BASE.chainID, OP.chainID, ARB.chainID];
+      : [XDC.chainID];
   const signClient = await EthereumProvider.init({
     projectId,
     showQrModal: true,
-    chains: [ETH.chainID],
+    chains: [XDC.chainID],
     optionalChains: allChainIds,
     methods: ['eth_sendTransaction', 'personal_sign'],
     events: ['chainChanged', 'accountsChanged'],
