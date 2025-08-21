@@ -123,7 +123,7 @@
         <!-- ===================================================================================== -->
         <!-- Footer -->
         <!-- ===================================================================================== -->
-        <v-row justify="center" class="ma-0 py-8 textMedium--text">
+        <!-- <v-row justify="center" class="ma-0 py-8 textMedium--text">
           {{ footer.text }}
           <a
             v-if="footer && footer.linkTitle && footer.link"
@@ -134,7 +134,7 @@
           >
             {{ footer.linkTitle }}
           </a>
-        </v-row>
+        </v-row> -->
       </v-container>
     </v-sheet>
   </v-bottom-sheet>
@@ -156,12 +156,12 @@ export default {
      * takes an object, i.e {text: 'Need help?', linkTitle: 'Contact support',
      * link: 'mailto:support@myetherwallet.com'}
      */
-    footer: {
+    /* footer: {
       type: Object,
       default: () => {
         return {};
       }
-    },
+    }, */
     /**
      * Opens the overlay from
      * the bottom of the screen.
