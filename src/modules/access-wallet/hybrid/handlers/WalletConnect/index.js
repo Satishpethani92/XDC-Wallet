@@ -120,11 +120,14 @@ const createWallet = async (identifier = WALLET_TYPES.WALLET_CONNECT) => {
     methods: ['eth_sendTransaction', 'personal_sign'],
     events: ['chainChanged', 'accountsChanged'],
     metadata: {
-      name: 'MyEtherWallet Inc',
+      name: 'XDCWallet Inc',
       description:
-        'MyEtherWallet (MEW) is a free, open-source, client-side interface for generating Ethereum wallets & more. Interact with the Ethereum blockchain easily & securely.',
-      url: 'https://myetherwallet.com',
-      icons: ['https://www.myetherwallet.com/favicon.png']
+        'XDCWallet (XOW) is a free, open-source, client-side interface for generating Ethereum wallets & more. Interact with the Ethereum blockchain easily & securely.',
+      url: 'https://wallet.xdc.network',
+      icons: [
+        'https://wallet.xdc.network/favicon.png' ||
+          'https://xdcscan.com/favicon.ico'
+      ]
     },
     qrModalOptions: {
       themeVariables: {
