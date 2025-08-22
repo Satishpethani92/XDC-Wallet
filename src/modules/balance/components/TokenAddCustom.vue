@@ -378,38 +378,59 @@ export default {
      * if it enters the catch then will just assign contract address.
      */
     async findTokenInfo() {
-      const contract = new this.web3.eth.Contract(
-        abiERC20,
-        this.contractAddress.toLowerCase()
-      );
-      this.token = this.contractToToken(this.contractAddress) || {};
+      const contractAddress = this.contractAddress.toLowerCase();
+      const contract = new this.web3.eth.Contract(abiERC20, contractAddress);
+
+      this.loading = true;
       try {
-        const balance = await contract.methods.balanceOf(this.address).call(),
-          decimals = await contract.methods.decimals().call();
-        if (this.token) {
-          const denominator = new BigNumber(10).pow(decimals);
-          this.token.usdBalance = new BigNumber(balance)
-            .div(denominator)
-            .times(this.token.price)
-            .toString();
-          this.token.usdBalancef = this.getFiatValue(this.token.usdBalance)
-            ? this.getFiatValue(this.token.usdBalance)
-            : this.getFiatValue(0);
-        } else {
-          this.token.name = await contract.methods.name().call();
-          this.token.symbol = await contract.methods.symbol().call();
-          this.token.usdBalancef = '0.00';
-          this.token.contract = this.contractAddress;
-        }
-        this.token.decimals = parseInt(decimals);
-        this.token.balance = balance;
-        this.token.balancef = this.getTokenBalance(balance, decimals).value;
-        this.loading = false;
-        this.step = 2;
-      } catch {
-        this.token.contract = this.contractAddress;
-        this.token.balancef = '0';
-        this.token.usdBalancef = '0.00';
+        // 1. Fetch from CoinGecko (XDC platform)
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/coins/xdce-crowd-sale/contract/${contractAddress}`
+        );
+        const data = await res.json();
+
+        // 2. On-chain data
+        const balance = await contract.methods.balanceOf(this.address).call();
+        const decimals = await contract.methods.decimals().call();
+
+        const denom = new BigNumber(10).pow(decimals);
+        const tokenBalance = new BigNumber(balance).div(denom).toString();
+        const price = data.market_data?.current_price?.usd || 0;
+        const usdBalance = new BigNumber(tokenBalance).times(price).toString();
+
+        // 3. Consolidate into token object
+        this.token = {
+          name: data.name || '',
+          symbol: data.symbol.toUpperCase() || '',
+          subtext: '', // optionally from data.description.en if useful
+          value: tokenBalance,
+          img: data.image?.large || '',
+          market_cap: data.market_data?.market_cap?.usd?.toString() || '0',
+          market_capf: data.market_data?.market_cap?.usd
+            ? `$${data.market_data.market_cap.usd.toLocaleString()}`
+            : '$0',
+          price_change_percentage_24h:
+            data.market_data?.price_change_percentage_24h?.toString() || '0',
+          price_change_percentage_24hf: data.market_data
+            ?.price_change_percentage_24h
+            ? `${data.market_data.price_change_percentage_24h.toFixed(2)}%`
+            : '0%',
+          price: price.toString(),
+          pricef: `$${price.toFixed(2)}`,
+          contract: contractAddress,
+          usdBalance,
+          usdBalancef: this.getFiatValue(usdBalance),
+          decimals: parseInt(decimals),
+          balance,
+          balancef: this.getTokenBalance(balance, decimals).value
+        };
+      } catch (error) {
+        this.token = {
+          contract: contractAddress,
+          balancef: '0',
+          usdBalancef: '0.00'
+        };
+      } finally {
         this.loading = false;
         this.step = 2;
       }
