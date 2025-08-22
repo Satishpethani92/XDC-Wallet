@@ -196,27 +196,22 @@ export default {
         .map(item => this.formatValues(item));
 
       const allTokens = [
-        ...customTokens,
         ...tokenList,
-        ...this.xrc20TokenDetails
+        ...this.xrc20TokenDetails,
+        ...customTokens,
       ];
 
-      allTokens.sort((a, b) => {
-        if (a.token === 'XDC' || a.token === 'TXDC') return -1;
-        if (b.token === 'XDC' || b.token === 'TXDC') return 1;
+      // Assign priority: lower number = higher priority
+      const getPriority = token => {
+        if (token.token === 'XDC' || token.token === 'TXDC') return 1; // top
+        if (this.xrc20TokenDetails.some(x => x.contract === token.contract))
+          return 2; // XRC20 next
+        if (customTokens.some(x => x.contract === token.contract)) return 3; // custom
+        return 4; // everything else
+      };
 
-        const aCap =
-          a.cap === 'N/A'
-            ? -Infinity
-            : parseFloat(a.cap.replace(/[^\d.-]/g, ''));
-        const bCap =
-          b.cap === 'N/A'
-            ? -Infinity
-            : parseFloat(b.cap.replace(/[^\d.-]/g, ''));
+      allTokens.sort((a, b) => getPriority(a) - getPriority(b));
 
-        return bCap - aCap;
-      });
-      // allTokens.sort((a, b) => b.cap - a.cap);
       return allTokens;
     },
     totalTokensValue() {
