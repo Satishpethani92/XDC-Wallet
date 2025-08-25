@@ -123,9 +123,9 @@ const createWallet = async (identifier = WALLET_TYPES.WALLET_CONNECT) => {
       name: 'XDCWallet Inc',
       description:
         'XDCWallet (XOW) is a free, open-source, client-side interface for generating Ethereum wallets & more. Interact with the Ethereum blockchain easily & securely.',
-      url: 'https://wallet.xdc.network',
+      url: 'https://wallet.xinfin.network',
       icons: [
-        'https://wallet.xdc.network/favicon.png' ||
+        'https://wallet.xinfin.network/favicon.png' ||
           'https://xdcscan.com/favicon.ico'
       ]
     },
