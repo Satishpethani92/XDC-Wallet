@@ -114,22 +114,22 @@ export default {
             //   }
             // },
             /* Hardware wallets */
-            {
-              color: 'white',
-              title: 'Buy a hardware wallet',
-              subtitle:
-                'For the highest standard of security, buy a hardware wallet and use it with MEW',
-              official: false,
-              recommended: true,
-              icon: require('@/assets/images/icons/icon-hardware-wallet.png'),
-              alt: 'Hardware Wallets',
-              fn: () => {
-                this.trackCreateWalletAmplitude(CREATE_WALLET.BUY_HARDWARE);
-                this.$router.push({
-                  name: ROUTES_HOME.BUY_HARDWARE_WALLET.NAME
-                });
-              }
-            },
+            // {
+            //   color: 'white',
+            //   title: 'Buy a hardware wallet',
+            //   subtitle:
+            //     'For the highest standard of security, buy a hardware wallet and use it with MEW',
+            //   official: false,
+            //   recommended: true,
+            //   icon: require('@/assets/images/icons/icon-hardware-wallet.png'),
+            //   alt: 'Hardware Wallets',
+            //   fn: () => {
+            //     this.trackCreateWalletAmplitude(CREATE_WALLET.BUY_HARDWARE);
+            //     this.$router.push({
+            //       name: ROUTES_HOME.BUY_HARDWARE_WALLET.NAME
+            //     });
+            //   }
+            // },
             /* Software */
             {
               color: 'white',
