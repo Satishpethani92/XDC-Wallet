@@ -190,24 +190,20 @@ export default {
         isEqual
       );
 
-      const tokenList = uniqueTokens
-        .filter(item => item && item.balance && BigNumber(item.balance).gt(0))
-        // .filter(item => item)
-        .map(item => this.formatValues(item));
+      const tokenList = uniqueTokens.map(item => this.formatValues(item));
 
+      // Merge everything
       const allTokens = [
         ...tokenList,
         ...this.xrc20TokenDetails,
-        ...customTokens,
+        ...customTokens
       ];
 
-      // Assign priority: lower number = higher priority
+      // Assign priority
       const getPriority = token => {
-        if (token.token === 'XDC' || token.token === 'TXDC') return 1; // top
-        if (this.xrc20TokenDetails.some(x => x.contract === token.contract))
-          return 2; // XRC20 next
-        if (customTokens.some(x => x.contract === token.contract)) return 3; // custom
-        return 4; // everything else
+        if (token.token === 'XDC' || token.token === 'TXDC') return 1; // top priority
+        if (token.usdBalance && Number(token.usdBalance) > 0) return 2; // has balance
+        return 3; // zero balance
       };
 
       allTokens.sort((a, b) => getPriority(a) - getPriority(b));

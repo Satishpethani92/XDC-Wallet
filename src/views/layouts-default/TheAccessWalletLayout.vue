@@ -314,20 +314,20 @@ export default {
             }
           },
           /* Hardware wallets */
-          {
-            color: 'white',
-            title: 'Hardware wallets',
-            subtitle: 'Ledger, Trezor, KeepKey, Cool Wallet, Bitbox02',
-            official: false,
-            recommended: true,
-            useBtn: true,
-            icon: require('@/assets/images/icons/icon-hardware-wallet.png'),
-            alt: 'Hardware Wallets',
-            fn: () => {
-              this.trackAccessWalletAmplitude(ACCESS_WALLET.HARWARE_WALLETS);
-              this.openOverlay(ACCESS_VALID_OVERLAYS.HARDWARE);
-            }
-          },
+          // {
+          //   color: 'white',
+          //   title: 'Hardware wallets',
+          //   subtitle: 'Ledger, Trezor, KeepKey, Cool Wallet, Bitbox02',
+          //   official: false,
+          //   recommended: true,
+          //   useBtn: true,
+          //   icon: require('@/assets/images/icons/icon-hardware-wallet.png'),
+          //   alt: 'Hardware Wallets',
+          //   fn: () => {
+          //     this.trackAccessWalletAmplitude(ACCESS_WALLET.HARWARE_WALLETS);
+          //     this.openOverlay(ACCESS_VALID_OVERLAYS.HARDWARE);
+          //   }
+          // },
           /* Software */
           {
             color: 'white',
