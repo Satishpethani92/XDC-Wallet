@@ -1,7 +1,7 @@
 {
   "tagline1": "XDC's ",
   "tagline2": "Original Wallet",
-  "subheading": "XDCWallet is a free, client-side interface helping you interact with the Ethereum blockchain. Our easy-to-use, open-source platform allows you to generate wallets, interact with smart contracts, and so much more.",
+  "subheading": "XDCWallet is a free, client-side interface helping you interact with the XDC Network. Our easy-to-use, open-source platform allows you to generate wallets, interact with smart contracts, and so much more.",
   "create-wallet": {
     "title": "Create a new wallet",
     "subtitle-one": "Please select a method to create a new wallet",
