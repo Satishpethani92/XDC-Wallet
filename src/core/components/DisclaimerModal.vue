@@ -3,7 +3,7 @@
     <div class="bgWalletBlock pa-7">
       <div class="full-width">
         <div class="mew-heading-2 mb-5">⚠️ Disclaimer</div>
-        <div class="textLight--text mew-body mb-5">
+        <div class="textDark--text mew-body mb-5">
           The XDC Network Web Wallet is a client-side tool — we never store your
           keys, passwords, or recovery phrases. You are fully responsible for
           your wallet and funds. Please double-check addresses and keep your
