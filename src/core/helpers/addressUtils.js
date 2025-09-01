@@ -6,9 +6,16 @@ import {
   isValidChecksumAddress
 } from 'ethereumjs-util';
 
+const normalizeXdcAddress = address => {
+  if (typeof address === 'string' && address.toLowerCase().startsWith('xdc')) {
+    return '0x' + address.slice(3);
+  }
+  return address;
+};
+
 const isAddress = address => {
   const chainId = store.getters['global/network'].type.chainID;
-
+  address = normalizeXdcAddress(address);
   if (chainId === ROOTSTOCK.chainID) {
     // check if it has the basic requirements of an address
     if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
@@ -21,7 +28,6 @@ const isAddress = address => {
       return true;
       // Otherwise check each case
     }
-
     return isValidChecksumAddress(address, chainId);
   }
 
@@ -31,11 +37,17 @@ const isAddress = address => {
 };
 const toChecksumAddress = address => {
   const chainId = store.getters['global/network'].type.chainID;
+  const normalized = normalizeXdcAddress(address);
+
   // Use EIP-1191 Address Checksum if its Rootstock network
   if (chainId === ROOTSTOCK.chainID) {
-    return toChecksumAddr(address, chainId);
+    return toChecksumAddr(normalized, chainId);
   }
 
-  return web3.utils.toChecksumAddress(address);
+  const checksummed = web3.utils.toChecksumAddress(normalized);
+
+  return address.toLowerCase().startsWith('xdc')
+    ? 'xdc' + checksummed.slice(2)
+    : checksummed;
 };
 export { isAddress, toChecksumAddress };

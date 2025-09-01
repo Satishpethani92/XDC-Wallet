@@ -398,7 +398,6 @@ export default {
         ...tokensList
       ];
 
-
       // add custom tokens section
       const customTokens = this.customTokens.reduce((arr, item) => {
         const isHidden = this.hiddenTokens.find(
@@ -746,6 +745,15 @@ export default {
       const allTokens = [...this.xrc20Tokens, ...this.customTokens];
       await this.fetchFromCoinGecko(allTokens);
     },
+    normalizeXdcAddress(address) {
+      if (
+        typeof address === 'string' &&
+        address.toLowerCase().startsWith('xdc')
+      ) {
+        return '0x' + address.slice(3);
+      }
+      return address;
+    },
     async fetchFromCoinGecko(tokensToFetch) {
       try {
         const tokensWithPotentialIds = tokensToFetch.filter(
@@ -925,7 +933,8 @@ export default {
       }
     },
     setAddress(addr, isValidAddress, userInputType) {
-      this.toAddress = addr;
+      const address = this.normalizeXdcAddress(addr);
+      this.toAddress = address;
       this.isValidAddress = isValidAddress;
       this.userInputType = userInputType;
     },

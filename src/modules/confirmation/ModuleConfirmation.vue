@@ -33,15 +33,15 @@
       <template #dialogBody>
         <v-card-text ref="scrollableContent" class="py-0 px-4 px-md-0">
           <div class="px-4 py-6 pr-6 textBlack2--text border-radius--5px mb-5">
-            <b>Please double check everything.</b> MEW team will not be able to
+            <b>Please double check everything.</b> XDC team will not be able to
             reverse your transaction once it's submitted. You will still be
             charged gas fee even if the transaction fails.
-            <a
+            <!-- <a
               :href="getArticle('my-txn-failed-charged')"
               target="_blank"
               rel="noopener noreferrer"
               >Learn more.</a
-            >
+            > -->
           </div>
           <div v-if="!isContractCreation">
             <confirmation-send-transaction-details
