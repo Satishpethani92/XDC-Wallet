@@ -35,7 +35,8 @@ const finalConfig = {
     resolve: {
       alias: {
         // This forces Webpack to use the standard JS file, bypassing the broken .mjs file
-        'libsodium-wrappers': path.resolve(__dirname, 'node_modules/libsodium-wrappers/dist/modules/libsodium-wrappers.js')
+        'libsodium-wrappers': path.resolve(__dirname, 'node_modules/libsodium-wrappers/dist/modules/libsodium-wrappers.js'),
+        'libsodium': path.resolve(__dirname, 'node_modules/libsodium/dist/modules/libsodium.js')
       }
     }
   }
