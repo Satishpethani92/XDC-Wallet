@@ -317,7 +317,8 @@ export default {
           {
             color: 'white',
             title: 'Hardware wallets',
-            subtitle: 'Ledger, Trezor, KeepKey, Cool Wallet, Bitbox02',
+            // subtitle: 'Ledger, Trezor, KeepKey, Cool Wallet, Bitbox02',
+            subtitle: 'Ledger, Trezor',
             official: false,
             recommended: true,
             useBtn: true,

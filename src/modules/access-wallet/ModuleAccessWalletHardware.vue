@@ -377,33 +377,36 @@ export default {
             this.trackAccessWalletAmplitude(ACCESS_WALLET.HW_TREZOR_CLICKED);
           }
         },
-        {
-          label: 'KeepKey',
-          icon: require('@/assets/images/icons/hardware-wallets/icon-keepkey.svg'),
-          type: WALLET_TYPES.KEEPKEY,
-          fn: () => {
-            this.trackAccessWalletAmplitude(ACCESS_WALLET.HW_KEEPKEY_CLICKED);
-          }
-        },
-        {
-          label: 'BitBox02',
-          icon: require('@/assets/images/icons/hardware-wallets/icon-bitbox.svg'),
-          type: WALLET_TYPES.BITBOX2,
-          fn: () => {
-            this.trackAccessWalletAmplitude(ACCESS_WALLET.HW_BITBOX02_CLICKED);
-          }
-        },
-        {
-          label: 'CoolWallet',
-          icon: require('@/assets/images/icons/hardware-wallets/icon-coolwallet.svg'),
-          type: WALLET_TYPES.COOL_WALLET,
-          fn: () => {
-            this.trackAccessWalletAmplitude(
-              ACCESS_WALLET.HW_COOL_WALLET_CLICKED
-            );
-          },
-          bluetooth: true
-        }
+        // Option KeepKey
+        // {
+        //   label: 'KeepKey',
+        //   icon: require('@/assets/images/icons/hardware-wallets/icon-keepkey.svg'),
+        //   type: WALLET_TYPES.KEEPKEY,
+        //   fn: () => {
+        //     this.trackAccessWalletAmplitude(ACCESS_WALLET.HW_KEEPKEY_CLICKED);
+        //   }
+        // },
+        // Option BitBox02
+        // {
+        //   label: 'BitBox02',
+        //   icon: require('@/assets/images/icons/hardware-wallets/icon-bitbox.svg'),
+        //   type: WALLET_TYPES.BITBOX2,
+        //   fn: () => {
+        //     this.trackAccessWalletAmplitude(ACCESS_WALLET.HW_BITBOX02_CLICKED);
+        //   }
+        // },
+        // Option CoolWallet
+        // {
+        //   label: 'CoolWallet',
+        //   icon: require('@/assets/images/icons/hardware-wallets/icon-coolwallet.svg'),
+        //   type: WALLET_TYPES.COOL_WALLET,
+        //   fn: () => {
+        //     this.trackAccessWalletAmplitude(
+        //       ACCESS_WALLET.HW_COOL_WALLET_CLICKED
+        //     );
+        //   },
+        //   bluetooth: true
+        // }
       ];
     },
     walletInitialized() {
