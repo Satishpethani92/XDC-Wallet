@@ -21,6 +21,14 @@ const finalConfig = {
     '@ensdomains/address-encoder',
     '@enkryptcom/name-resolution',
     '@formatjs',
+    '@sinclair/typebox',
+    '@trezor/schema-utils',
+    '@trezor/connect',
+    '@trezor/connect-web',
+    '@formatjs/ecma402-abstract',
+    '@formatjs/fast-memoize',
+    '@formatjs/intl-localematcher',
+    '@formatjs/intl-numberformat'
   ],
 
   configureWebpack: {
