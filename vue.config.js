@@ -1,6 +1,5 @@
 const offlineConfig = require('./builds/offlineConfig');
 const liveConfig = require('./builds/liveConfig');
-const path = require('path');
 
 let baseConfig = {};
 if (process.env.BUILD === 'offline') {
@@ -21,25 +20,7 @@ const finalConfig = {
     '@ensdomains/address-encoder',
     '@enkryptcom/name-resolution',
     '@formatjs',
-    '@sinclair/typebox',
-    '@trezor/schema-utils',
-    '@trezor/connect',
-    '@trezor/connect-web',
-    '@formatjs/ecma402-abstract',
-    '@formatjs/fast-memoize',
-    '@formatjs/intl-localematcher',
-    '@formatjs/intl-numberformat'
   ],
-
-  configureWebpack: {
-    resolve: {
-      alias: {
-        // This forces Webpack to use the standard JS file, bypassing the broken .mjs file
-        'libsodium-wrappers': path.resolve(__dirname, 'node_modules/libsodium-wrappers/dist/modules/libsodium-wrappers.js'),
-        'libsodium': path.resolve(__dirname, 'node_modules/libsodium/dist/modules/libsodium.js')
-      }
-    }
-  }
 };
 
 module.exports = finalConfig;
