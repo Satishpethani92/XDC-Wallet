@@ -1,5 +1,6 @@
 const offlineConfig = require('./builds/offlineConfig');
 const liveConfig = require('./builds/liveConfig');
+const path = require('path');
 
 let baseConfig = {};
 if (process.env.BUILD === 'offline') {
