@@ -19,8 +19,18 @@ const finalConfig = {
     // Add the new packages here
     '@ensdomains/address-encoder',
     '@enkryptcom/name-resolution',
-    '@formatjs'
-  ]
+    '@formatjs',
+  ],
+
+  configureWebpack: {
+    resolve: {
+      alias: {
+        // This forces Webpack to use the standard JS file, bypassing the broken .mjs file
+        'libsodium-wrappers': path.resolve(__dirname, 'node_modules/libsodium-wrappers/dist/modules/libsodium-wrappers.js'),
+        'libsodium': path.resolve(__dirname, 'node_modules/libsodium-wrappers/dist/modules/libsodium.js'),
+      }
+    }
+  }
 };
 
 module.exports = finalConfig;
