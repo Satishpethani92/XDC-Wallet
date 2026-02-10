@@ -21,6 +21,15 @@ const finalConfig = {
     '@enkryptcom/name-resolution',
     '@formatjs',
   ],
+  chainWebpack: config => {
+    if (baseConfig.chainWebpack) {
+      baseConfig.chainWebpack(config);
+    }
+    config.resolve.alias.set(
+      'libsodium-wrappers',
+      'libsodium-wrappers/dist/modules/libsodium-wrappers.js'
+    );
+  },
 };
 
 module.exports = finalConfig;
