@@ -18,7 +18,8 @@ const finalConfig = {
 
     // Add the new packages here
     '@ensdomains/address-encoder',
-    '@enkryptcom/name-resolution'
+    '@enkryptcom/name-resolution',
+    '@formatjs'
   ]
 };
 
