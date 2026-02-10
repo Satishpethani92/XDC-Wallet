@@ -29,6 +29,10 @@ const finalConfig = {
       'libsodium-wrappers',
       'libsodium-wrappers/dist/modules/libsodium-wrappers.js'
     );
+    config.resolve.alias.set(
+      'libsodium',
+      'libsodium/dist/modules/libsodium.js'
+    );
   },
 };
 
