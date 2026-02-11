@@ -1,6 +1,7 @@
 const ethereum = {
   path: "m/44'/60'/0'/0",
-  label: 'Ethereum'
+  // label: 'Ethereum'
+  label: 'XDC Network 2'
 };
 const poaNetwork = {
   path: "m/44'/60'/0'/0",

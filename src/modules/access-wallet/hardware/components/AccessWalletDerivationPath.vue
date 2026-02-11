@@ -126,7 +126,7 @@
       >
         <div class="d-flex align-center">
           <v-img
-            :src="require('@/assets/images/currencies/eth.png')"
+            :src="require('@/assets/images/networks/xdc.svg')"
             contain
             class="mr-2"
             max-height="24px"
@@ -296,9 +296,13 @@ export default {
       });
     } */
     filteredPaths() {
-      return this.passedPaths.filter(path => {
-        return path.value === "m/44'/550'/0'/0";
-      });
+      const order = ["m/44'/550'/0'/0", "m/44'/60'/0'/0"];
+
+      return this.passedPaths
+        .filter(path => order.includes(path.value))
+        .sort((a, b) => {
+          return order.indexOf(a.value) - order.indexOf(b.value);
+        });
     }
   },
   methods: {
