@@ -77,11 +77,17 @@
             >
               <template #panelBody1>
                 <div class="px-5">
-                  <mew-input
+                  <!--  <mew-input
                     v-model="extraWord"
                     type="password"
                     label="Enter Extra word"
                     placeholder="Enter your extra word"
+                  /> -->
+                  <mew-input
+                    v-model="extraWord"
+                    type="password"
+                    label="Enter password"
+                    placeholder="Enter your password"
                   />
                 </div>
               </template>
@@ -224,8 +230,10 @@ export default {
     extraWordPanel() {
       return [
         {
-          name: 'Do you have an extra word?',
-          toggleTitle: 'Add your word'
+          // name: 'Do you have an extra word?',
+          // toggleTitle: 'Add your word'
+          name: 'Do you have password?',
+          toggleTitle: 'Add your password'
         }
       ];
     },
