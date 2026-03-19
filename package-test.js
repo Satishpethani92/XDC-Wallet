@@ -110,7 +110,8 @@ const EXCEPTIONS = [
   'lottie-web',
   'moment-timezone',
   'babel-jest',
-  'protobufjs'
+  'protobufjs',
+  'bignumber.js' 
 ];
 const CUSTOM_DIST = {
   ['babel-core']: 'bridge'
