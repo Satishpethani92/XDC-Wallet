@@ -324,7 +324,7 @@ export default {
           await this.fetchFromCoinCap();
         }
       } catch (error) {
-        console.error('Error fetching price data:', error);
+        // console.error('Error fetching price data:', error);
       }
       this.loadingPriceData = false;
     },
@@ -354,7 +354,7 @@ export default {
         }
         return false;
       } catch (e) {
-        console.warn('CoinGecko API error:', e);
+        // console.warn('CoinGecko API error:', e);
         return false;
       }
     },
@@ -380,7 +380,7 @@ export default {
         }
         return false;
       } catch (e) {
-        console.warn('CoinCap API error:', e);
+        // console.warn('CoinCap API error:', e);
         return false;
       }
     },

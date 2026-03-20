@@ -232,7 +232,7 @@ export default {
         await this.fetchAllTokenPrices();
         await this.fetchAndFormatXrc20Balances();
       } catch (error) {
-        console.error('Error fetching token data:', error);
+        // console.error('Error fetching token data:', error);
       }
       this.loadingTokens = false;
     },
@@ -284,10 +284,10 @@ export default {
             });
           });
         } else {
-          console.error('CoinGecko API failed:', res.status, res.statusText);
+          // console.error('CoinGecko API failed:', res.status, res.statusText);
         }
       } catch (e) {
-        console.error('CoinGecko API error:', e);
+        // console.error('CoinGecko API error:', e);
       }
     },
 
@@ -335,7 +335,7 @@ export default {
           }
         }
       } catch (e) {
-        console.warn('CoinCap API error:', e);
+        // console.warn('CoinCap API error:', e);
       }
     },
 
@@ -346,7 +346,7 @@ export default {
         const balanceWei = await this.web3.eth.getBalance(this.address);
         return this.web3.utils.fromWei(balanceWei, 'ether');
       } catch (e) {
-        console.error('Error getting native balance:', e);
+        // console.error('Error getting native balance:', e);
         return '0';
       }
     },
@@ -397,7 +397,7 @@ export default {
             }
             return null;
           } catch (error) {
-            console.error(`Error fetching balance for ${token.symbol}:`, error);
+            // console.error(`Error fetching balance for ${token.symbol}:`, error);
             return null;
           }
         });
@@ -405,7 +405,7 @@ export default {
         const resolvedTokens = await Promise.all(balancePromises);
         this.xrc20TokenDetails = resolvedTokens.filter(t => t !== null);
       } catch (error) {
-        console.error('Error in fetchAndFormatXrc20Balances:', error);
+        // console.error('Error in fetchAndFormatXrc20Balances:', error);
       }
     },
 
