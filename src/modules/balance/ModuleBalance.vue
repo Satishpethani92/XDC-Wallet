@@ -5,14 +5,14 @@
       display if the user has an eth balance > 0
     =====================================================================================
     -->
-    <loader v-if="loadingWalletInfo" />
+    <loader v-if="loadingWalletInfo || loadingPriceData" />
 
     <mew-module
-      v-if="hasBalance && !loadingWalletInfo"
+      v-if="hasBalance && !loadingWalletInfo && !loadingPriceData"
       :subtitle="subtitle"
       :title="title"
       :has-body-padding="false"
-      :icon="network.type.icon"
+      :icon="networkIcon"
       :caption="convertedBalance"
       :has-elevation="true"
       :has-full-height="true"
@@ -91,7 +91,7 @@
     =====================================================================================
     -->
     <balance-empty-block
-      v-if="!hasBalance && !loadingWalletInfo"
+      v-if="!hasBalance && !loadingWalletInfo && !loadingPriceData"
       :network-type="network.type.currencyName"
       :is-eth="isEthNetwork"
     />
@@ -123,7 +123,16 @@ export default {
       chartData: [],
       timeString: '',
       scale: '',
-      activeButton: 0
+      activeButton: 0,
+      // XDC specific data
+      xdcPriceData: {
+        price: 0,
+        priceChange24h: 0,
+        marketCap: 0,
+        image: null
+      },
+      loadingPriceData: false,
+      priceUpdateInterval: null
     };
   },
   computed: {
@@ -136,12 +145,65 @@ export default {
       'networkTokenUSDMarket'
     ]),
     ...mapGetters('global', ['isEthNetwork', 'network']),
+
+    /**
+     * Check if current network is XDC
+     */
+    isXdcNetwork() {
+      const currencyName = this.network?.type?.currencyName?.toUpperCase();
+      return currencyName === 'XDC' || currencyName === 'TXDC';
+    },
+
+    /**
+     * Get network icon with XDC fallback
+     */
+    networkIcon() {
+      if (this.isXdcNetwork && this.xdcPriceData.image) {
+        return this.xdcPriceData.image;
+      }
+      return this.network.type.icon;
+    },
+
+    /**
+     * Get current token price (XDC or from store)
+     */
+    currentTokenPrice() {
+      if (this.isXdcNetwork) {
+        return this.xdcPriceData.price;
+      }
+      return this.fiatValue || 0;
+    },
+
+    /**
+     * Get current price change 24h (XDC or from store)
+     */
+    currentPriceChange24h() {
+      if (this.isXdcNetwork) {
+        return this.xdcPriceData.priceChange24h;
+      }
+      return this.networkTokenUSDMarket?.price_change_percentage_24h || 0;
+    },
+
+    /**
+     * Calculate balance in fiat
+     */
+    currentBalanceFiatValue() {
+      if (this.isXdcNetwork) {
+        return new BigNumber(this.balanceInETH)
+          .times(this.xdcPriceData.price)
+          .toNumber();
+      }
+      return this.balanceFiatValue;
+    },
+
     priceChangeArrow() {
       return this.priceChange ? 'mdi-arrow-up-bold' : 'mdi-arrow-down-bold';
     },
+
     priceChange() {
-      return this.networkTokenUSDMarket.price_change_percentage_24h > 0;
+      return this.currentPriceChange24h > 0;
     },
+
     /**
      * Computed property returns formated eth value of the wallet balance
      * ie: $12.45 per 1 ETH
@@ -154,9 +216,6 @@ export default {
     sendText() {
       return `Send ${this.network.type.currencyName}`;
     },
-    /* swapText() {
-      return `Swap ${this.network.type.currencyName}`;
-    }, */
     subtitle() {
       return `My ${this.network.type.currencyName} Balance`;
     },
@@ -166,36 +225,40 @@ export default {
      */
     convertedBalance() {
       if (this.fiatLoaded) {
-        return this.getFiatValue(this.balanceFiatValue);
+        return this.getFiatValue(this.currentBalanceFiatValue);
       }
       return '';
     },
+
     /**
      * Computed property returns formated 24 hours percentage change
      * ie: $12.45 per 1 ETH
      */
     formatChange() {
       if (this.fiatLoaded) {
-        return formatPercentageValue(
-          this.networkTokenUSDMarket.price_change_percentage_24h
-        ).value;
+        return formatPercentageValue(this.currentPriceChange24h).value;
       }
       return '';
     },
+
     /**
      * Computed property returns formats Fiat Price
      * ie: $12.45 per 1 ETH
      */
     formatFiatPrice() {
       if (this.fiatLoaded) {
-        return this.getFiatValue(this.fiatValue);
+        return this.getFiatValue(this.currentTokenPrice);
       }
       return '';
     },
+
     /**
      * Computed property returns whether or not fiat info is loaded
      */
     fiatLoaded() {
+      if (this.isXdcNetwork) {
+        return this.xdcPriceData.price > 0;
+      }
       return (
         !!this.networkTokenUSDMarket &&
         !!this.networkTokenUSDMarket.price_change_percentage_24h &&
@@ -215,12 +278,113 @@ export default {
     chartData: {
       handler: function () {},
       deep: true
+    },
+    address: {
+      handler: 'fetchPriceData',
+      immediate: true
+    },
+    network: {
+      handler: 'fetchPriceData',
+      deep: true
     }
   },
   mounted() {
     this.initChart();
+    this.fetchPriceData();
+    this.startPriceUpdateInterval();
+  },
+  beforeDestroy() {
+    if (this.priceUpdateInterval) {
+      clearInterval(this.priceUpdateInterval);
+    }
   },
   methods: {
+    /**
+     * Start interval to update price data every 5 minutes
+     */
+    startPriceUpdateInterval() {
+      this.priceUpdateInterval = setInterval(() => {
+        this.fetchPriceData();
+      }, 5 * 60 * 1000); // 5 minutes
+    },
+
+    /**
+     * Fetch price data based on network
+     */
+    async fetchPriceData() {
+      if (!this.isXdcNetwork) return;
+
+      this.loadingPriceData = true;
+      try {
+        // Try CoinGecko first
+        const success = await this.fetchFromCoinGecko();
+
+        // If CoinGecko fails, try CoinCap
+        if (!success) {
+          await this.fetchFromCoinCap();
+        }
+      } catch (error) {
+        console.error('Error fetching price data:', error);
+      }
+      this.loadingPriceData = false;
+    },
+
+    /**
+     * Fetch XDC price from CoinGecko
+     */
+    async fetchFromCoinGecko() {
+      try {
+        const coingeckoId = 'xdce-crowd-sale'; // Correct CoinGecko ID for XDC
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coingeckoId}&order=market_cap_desc&sparkline=false`
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const coin = data[0];
+            this.xdcPriceData = {
+              price: coin.current_price || 0,
+              priceChange24h: coin.price_change_percentage_24h || 0,
+              marketCap: coin.market_cap || 0,
+              image: coin.image || null
+            };
+            return true;
+          }
+        }
+        return false;
+      } catch (e) {
+        console.warn('CoinGecko API error:', e);
+        return false;
+      }
+    },
+
+    /**
+     * Fallback: Fetch XDC price from CoinCap
+     */
+    async fetchFromCoinCap() {
+      try {
+        const res = await fetch('https://api.coincap.io/v2/assets/xdc-network');
+
+        if (res.ok) {
+          const { data } = await res.json();
+          if (data) {
+            this.xdcPriceData = {
+              price: parseFloat(data.priceUsd) || 0,
+              priceChange24h: parseFloat(data.changePercent24Hr) || 0,
+              marketCap: parseFloat(data.marketCapUsd) || 0,
+              image: this.xdcPriceData.image // Keep existing image if any
+            };
+            return true;
+          }
+        }
+        return false;
+      } catch (e) {
+        console.warn('CoinCap API error:', e);
+        return false;
+      }
+    },
+
     initChart() {
       let count = 0;
       const checker = () => {

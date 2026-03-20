@@ -87,7 +87,6 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { uniqWith, isEqual } from 'lodash';
 import BigNumber from 'bignumber.js';
 // import { ROUTES_WALLET } from '@/core/configs/configRoutes';
 import { currencyToNumber } from '@/core/helpers/localization';
@@ -142,7 +141,7 @@ export default {
   },
   computed: {
     ...mapState('wallet', ['address']),
-    ...mapGetters('wallet', ['tokensList', 'web3']),
+    ...mapGetters('wallet', ['web3']),
     ...mapState('wallet', ['web3', 'loadingWalletInfo']),
     ...mapGetters('custom', [
       'customTokens',
@@ -174,36 +173,28 @@ export default {
       );
     },
     tokensData() {
-      if (!this.tokensList && !this.customTokens && !this.hiddenTokens)
-        return [];
+      if (!this.customTokens && !this.hiddenTokens) return [];
 
       const customTokens = this.customTokens.reduce((arr, item) => {
         const isHidden = this.hiddenTokens.find(
           token => item.contract == token.address
         );
-        if (!isHidden) arr.push(this.formatValues(item));
+        // Check if already exists in xrc20TokenDetails
+        const existsInXrc20 = this.xrc20TokenDetails.find(
+          t => t.contractAddress?.toLowerCase() === item.contract?.toLowerCase()
+        );
+        if (!isHidden && !existsInXrc20) arr.push(this.formatValues(item));
         return arr;
       }, []);
 
-      const uniqueTokens = uniqWith(
-        this.tokensList.filter(t => !t.isHidden),
-        isEqual
-      );
-
-      const tokenList = uniqueTokens.map(item => this.formatValues(item));
-
-      // Merge everything
-      const allTokens = [
-        ...tokenList,
-        ...this.xrc20TokenDetails,
-        ...customTokens
-      ];
+      // Merge xrc20TokenDetails and customTokens (removed tokenList)
+      const allTokens = [...this.xrc20TokenDetails, ...customTokens];
 
       // Assign priority
       const getPriority = token => {
-        if (token.token === 'XDC' || token.token === 'TXDC') return 1; // top priority
-        if (token.usdBalance && Number(token.usdBalance) > 0) return 2; // has balance
-        return 3; // zero balance
+        if (token.token === 'XDC' || token.token === 'TXDC') return 1;
+        if (token.usdBalance && Number(token.usdBalance) > 0) return 2;
+        return 3;
       };
 
       allTokens.sort((a, b) => getPriority(a) - getPriority(b));
@@ -211,7 +202,6 @@ export default {
       return allTokens;
     },
     totalTokensValue() {
-      // return this.getFiatValue(this.totalTokenFiatValue);
       const total = this.tokensData.reduce((acc, token) => {
         return new BigNumber(acc).plus(token.usdBalance || 0);
       }, new BigNumber(0));
@@ -238,61 +228,130 @@ export default {
     async fetchAllTokenData() {
       if (!this.address) return;
       this.loadingTokens = true;
-      await this.fetchAllTokenPrices();
-      await this.fetchAndFormatXrc20Balances();
+      try {
+        await this.fetchAllTokenPrices();
+        await this.fetchAndFormatXrc20Balances();
+      } catch (error) {
+        console.error('Error fetching token data:', error);
+      }
       this.loadingTokens = false;
     },
 
     async fetchAllTokenPrices() {
-      this.loadingTokens = true;
       const allTokens = [...this.xrc20Tokens, ...this.customTokens];
-      await this.fetchFromCoinGecko(allTokens);
-      this.loadingTokens = false;
+
+      // Try CoinGecko first (using coingeckoId - more reliable)
+      await this.fetchFromCoinGeckoById(allTokens);
+
+      // Fallback to CoinCap for any missing prices
+      await this.fetchFromCoinCap(allTokens);
     },
 
-    async fetchFromCoinGecko(tokensToFetch) {
+    // Primary API: CoinGecko using IDs (more reliable than symbols)
+    async fetchFromCoinGeckoById(tokensToFetch) {
       try {
-        const tokensWithPotentialIds = tokensToFetch.filter(
-          t => t.symbol && t.symbol.length > 0
+        const tokensWithIds = tokensToFetch.filter(t => t.coingeckoId);
+        if (tokensWithIds.length === 0) return;
+
+        const ids = [...new Set(tokensWithIds.map(t => t.coingeckoId))].join(
+          ','
         );
 
-        if (tokensWithPotentialIds.length === 0) return;
+        const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=false`;
+        // console.log('CoinGecko API URL:', url);
 
-        const symbols = [
-          ...new Set(tokensWithPotentialIds.map(t => t.symbol.toLowerCase()))
-        ].join(',');
-
-        const res = await fetch(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&symbols=${symbols}`
-        );
+        const res = await fetch(url);
 
         if (res.ok) {
           const data = await res.json();
+
+          // console.log('CoinGecko Response:', data);
+
           data.forEach(coin => {
-            const symbolUpper = coin.symbol.toUpperCase();
             const matchingTokens = tokensToFetch.filter(
-              t => t.symbol.toUpperCase() === symbolUpper
+              t => t.coingeckoId === coin.id
             );
 
-            if (matchingTokens.length > 0) {
-              matchingTokens.forEach(token => {
-                const key = token.contract || token.symbol;
-                this.$set(this.tokenPrices, key, {
-                  price: coin.current_price || 0,
-                  change24h: coin.price_change_percentage_24h || 0,
-                  marketCap: coin.market_cap || 0,
-                  image: coin.image,
-                  source: 'coingecko'
-                });
+            matchingTokens.forEach(token => {
+              const key = token.contract || token.symbol;
+              this.$set(this.tokenPrices, key, {
+                price: coin.current_price || 0,
+                change24h: coin.price_change_percentage_24h || 0,
+                marketCap: coin.market_cap || 0,
+                image: coin.image,
+                source: 'coingecko'
               });
-            }
+            });
           });
+        } else {
+          console.error('CoinGecko API failed:', res.status, res.statusText);
         }
       } catch (e) {
-        // console.error('CoinGecko API error:', e);
+        console.error('CoinGecko API error:', e);
       }
     },
 
+    // Fallback API 1: CoinCap (free, no CORS issues)
+    async fetchFromCoinCap(tokensToFetch) {
+      try {
+        const missingTokens = tokensToFetch.filter(t => {
+          const key = t.contract || t.symbol;
+          return !this.tokenPrices[key];
+        });
+
+        if (missingTokens.length === 0) return;
+
+        // CoinCap asset mapping (symbol to coincap id)
+        const coinCapMapping = {
+          XDC: 'xdc-network',
+          PLI: 'plugin',
+          SRX: 'storx',
+          CGO: 'comtech-gold'
+        };
+
+        for (const token of missingTokens) {
+          const coinCapId = coinCapMapping[token.symbol];
+          if (!coinCapId) continue;
+
+          try {
+            const res = await fetch(
+              `https://api.coincap.io/v2/assets/${coinCapId}`
+            );
+            if (res.ok) {
+              const { data } = await res.json();
+              if (data) {
+                const key = token.contract || token.symbol;
+                this.$set(this.tokenPrices, key, {
+                  price: parseFloat(data.priceUsd) || 0,
+                  change24h: parseFloat(data.changePercent24Hr) || 0,
+                  marketCap: parseFloat(data.marketCapUsd) || 0,
+                  image: null,
+                  source: 'coincap'
+                });
+              }
+            }
+          } catch (e) {
+            // Continue to next token
+          }
+        }
+      } catch (e) {
+        console.warn('CoinCap API error:', e);
+      }
+    },
+
+    // Get native XDC balance
+    async getNativeBalance() {
+      try {
+        if (!this.web3 || !this.web3.eth || !this.address) return '0';
+        const balanceWei = await this.web3.eth.getBalance(this.address);
+        return this.web3.utils.fromWei(balanceWei, 'ether');
+      } catch (e) {
+        console.error('Error getting native balance:', e);
+        return '0';
+      }
+    },
+
+    // Get XRC20 token balance
     async getTokenBalance(contractAddress) {
       try {
         if (!this.web3 || !this.web3.eth || !this.address) return '0';
@@ -320,14 +379,25 @@ export default {
       try {
         const balancePromises = this.xrc20Tokens.map(async token => {
           try {
-            const balance = await this.getTokenBalance(token.contract);
-            const balanceBN = new BigNumber(balance);
+            let balance;
 
-            if (this.tokenPrices[token.contract] || balanceBN.gt(0)) {
+            // Handle native XDC token differently
+            if (token.isNative || token.contract === 'native') {
+              balance = await this.getNativeBalance();
+            } else {
+              balance = await this.getTokenBalance(token.contract);
+            }
+
+            const balanceBN = new BigNumber(balance);
+            const priceKey = token.contract || token.symbol;
+
+            // Include token if it has price data OR has balance
+            if (this.tokenPrices[priceKey] || balanceBN.gt(0)) {
               return this.formatXrc20Token(token, balance);
             }
             return null;
           } catch (error) {
+            console.error(`Error fetching balance for ${token.symbol}:`, error);
             return null;
           }
         });
@@ -335,12 +405,13 @@ export default {
         const resolvedTokens = await Promise.all(balancePromises);
         this.xrc20TokenDetails = resolvedTokens.filter(t => t !== null);
       } catch (error) {
-        // console.error('Error in fetchAndFormatXrc20Balances:', error);
+        console.error('Error in fetchAndFormatXrc20Balances:', error);
       }
     },
 
     formatXrc20Token(token, balance) {
-      const priceData = this.tokenPrices[token.contract] || {
+      const priceKey = token.contract || token.symbol;
+      const priceData = this.tokenPrices[priceKey] || {
         price: 0,
         change24h: 0,
         marketCap: 0
@@ -348,6 +419,19 @@ export default {
 
       const balanceBN = new BigNumber(balance);
       const usdBalance = balanceBN.times(priceData.price).toNumber();
+
+      // Get token image with XDC fallback
+      let tokenImg = priceData.image;
+      if (!tokenImg) {
+        if (token.isNative || token.symbol === 'XDC') {
+          // Use XDC icon from CoinGecko or local asset
+          tokenImg =
+            'https://coin-images.coingecko.com/coins/images/2912/large/xdc-icon.png?1696503661';
+          // Or use local: tokenImg = require('@/assets/images/networks/xdc.svg');
+        } else {
+          tokenImg = this.network?.type?.icon || null;
+        }
+      }
 
       return {
         balance: [
@@ -366,7 +450,7 @@ export default {
         status: priceData.change24h >= 0 ? '+' : '-',
         price:
           priceData.price > 0 ? this.getFiatValue(priceData.price) : '$0.00',
-        tokenImg: priceData.image || token.image,
+        tokenImg: tokenImg,
         /* callToAction:
           this.hasSwap && balanceBN.gt(0) && !token.disableSwap
             ? [
@@ -386,6 +470,8 @@ export default {
                 }
               ]
             : [] */
+        contractAddress: token.contract,
+        isNative: token.isNative || false,
         callToAction: []
       };
     },
@@ -458,10 +544,7 @@ export default {
 
       newObj.token = item.symbol;
       newObj.tokenImg =
-        (priceData && priceData.image) ||
-        (item.symbol == 'ETH'
-          ? require('@/assets/images/networks/eth.svg')
-          : item.img || this.network.type.icon);
+        (priceData && priceData.image) || item.img || this.network.type.icon;
       /* if (this.hasSwap && !item.disableSwap) {
         newObj.callToAction = [
           {
@@ -479,6 +562,7 @@ export default {
         ];
       } */
       newObj.callToAction = [];
+      newObj.contractAddress = item.contract;
       return newObj;
     },
 

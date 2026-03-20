@@ -113,7 +113,7 @@
         ]"
       >
         <v-skeleton-loader
-          v-if="loadingWalletInfo"
+          v-if="loadingWalletInfo || loadingPriceData"
           type="heading"
           class="theme-dark-heading"
         ></v-skeleton-loader>
@@ -133,10 +133,14 @@
         <div v-if="!isOfflineApp" class="justify-start">
           <!--
           =====================================================================================
-            Total Wallet chain balance: prensent if not Test network
+            Total Wallet chain balance: present if not Test network
           =====================================================================================
           -->
-          <v-skeleton-loader v-if="loadingWalletInfo" type="text" width="100" />
+          <v-skeleton-loader
+            v-if="loadingWalletInfo || loadingPriceData"
+            type="text"
+            width="100"
+          />
           <div
             v-else-if="!isTestNetwork"
             class="info-container--text-chain-balance"
@@ -148,7 +152,11 @@
             Total Tokens: present if tokens found
           =====================================================================================
           -->
-          <v-skeleton-loader v-if="loadingWalletInfo" type="text" width="100" />
+          <v-skeleton-loader
+            v-if="loadingWalletInfo || loadingPriceData"
+            type="text"
+            width="100"
+          />
           <div v-else-if="nonChainTokensCount > 0" class="info-container--text">
             and {{ nonChainTokensCount }} Tokens
           </div>
@@ -261,6 +269,7 @@ import anime from 'animejs/lib/anime.es.js';
 import { mapGetters, mapActions, mapState } from 'vuex';
 import clipboardCopy from 'clipboard-copy';
 import { isEmpty } from 'lodash';
+import BigNumber from 'bignumber.js';
 
 import { Toast, SUCCESS, ERROR } from '@/modules/toast/handler/handlerToast';
 import { toChecksumAddress } from '@/core/helpers/addressUtils';
@@ -295,7 +304,16 @@ export default {
       showVerify: false,
       wallets: wallets,
       resolvedName: '',
-      nameResolver: null
+      nameResolver: null,
+      // XDC specific data
+      xdcPriceData: {
+        price: 0,
+        priceChange24h: 0,
+        marketCap: 0,
+        image: null
+      },
+      loadingPriceData: false,
+      priceUpdateInterval: null
     };
   },
   computed: {
@@ -311,6 +329,26 @@ export default {
     ...mapGetters('global', ['network', 'isTestNetwork', 'getFiatValue']),
     ...mapGetters('wallet', ['tokensList', 'balanceInETH']),
     ...mapState('wallet', ['web3']),
+
+    /**
+     * Check if current network is XDC
+     */
+    isXdcNetwork() {
+      const currencyName = this.network?.type?.currencyName?.toUpperCase();
+      return currencyName === 'XDC' || currencyName === 'TXDC';
+    },
+    /**
+     * Calculate balance in fiat for XDC network
+     */
+    xdcBalanceFiatValue() {
+      if (this.isXdcNetwork && this.xdcPriceData.price > 0) {
+        return new BigNumber(this.balanceInETH)
+          .times(this.xdcPriceData.price)
+          .toNumber();
+      }
+      return 0;
+    },
+
     blockExplorer() {
       return this.network.type.blockExplorerAddr.replace(
         '[[address]]',
@@ -405,10 +443,19 @@ export default {
         : '';
     },
     /**
-     * returns token values
-     * returns @String
+     * returns token values - updated for XDC network
+     * returns @Number
      */
     totalTokenBalance() {
+      if (this.isXdcNetwork) {
+        // For XDC network, calculate total including XDC balance and XRC20 tokens
+        const xdcBalance = this.xdcBalanceFiatValue;
+        // Add any additional token values from the store
+        const otherTokens = this.totalTokenFiatValue || 0;
+        // Avoid double counting - if totalTokenFiatValue already includes native token
+        // you may need to adjust this logic based on your store implementation
+        return xdcBalance > 0 ? xdcBalance : otherTokens;
+      }
       return this.totalTokenFiatValue;
     },
     /**
@@ -417,6 +464,10 @@ export default {
      */
     totalWalletBalance() {
       if (!this.isTestNetwork) {
+        if (this.isXdcNetwork) {
+          const total = this.totalTokenBalance;
+          return this.getFiatValue(total);
+        }
         const total = this.totalTokenBalance;
         return this.getFiatValue(total);
       }
@@ -462,16 +513,154 @@ export default {
        * At side menu closes, close paper wallet
        */
       this.showPaperWallet = false;
+    },
+    address: {
+      handler: 'fetchPriceData',
+      immediate: true
+    },
+    network: {
+      handler: 'fetchPriceData',
+      deep: true
     }
   },
   mounted() {
     this.setupNameResolver();
+    this.fetchPriceData();
+    this.startPriceUpdateInterval();
+  },
+  beforeDestroy() {
+    if (this.priceUpdateInterval) {
+      clearInterval(this.priceUpdateInterval);
+    }
   },
   methods: {
     ...mapActions('external', ['setTokenAndEthBalance']),
     ...mapActions('wallet', ['removeWallet']),
+
     /**
-     * checks if network supoorts ens
+     * Start interval to update price data every 5 minutes
+     */
+    startPriceUpdateInterval() {
+      this.priceUpdateInterval = setInterval(() => {
+        this.fetchPriceData();
+      }, 5 * 60 * 1000); // 5 minutes
+    },
+
+    /**
+     * Fetch price data based on network
+     */
+    async fetchPriceData() {
+      if (!this.isXdcNetwork) return;
+
+      this.loadingPriceData = true;
+      try {
+        // Try CoinGecko first
+        const success = await this.fetchFromCoinGecko();
+
+        // If CoinGecko fails, try CoinCap
+        if (!success) {
+          await this.fetchFromCoinCap();
+        }
+
+        // If CoinCap fails, try CryptoCompare
+        if (this.xdcPriceData.price === 0) {
+          await this.fetchFromCryptoCompare();
+        }
+      } catch (error) {
+        console.error('Error fetching price data:', error);
+      }
+      this.loadingPriceData = false;
+    },
+
+    /**
+     * Fetch XDC price from CoinGecko
+     */
+    async fetchFromCoinGecko() {
+      try {
+        const coingeckoId = 'xdce-crowd-sale'; // Correct CoinGecko ID for XDC
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coingeckoId}&order=market_cap_desc&sparkline=false`
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const coin = data[0];
+            this.xdcPriceData = {
+              price: coin.current_price || 0,
+              priceChange24h: coin.price_change_percentage_24h || 0,
+              marketCap: coin.market_cap || 0,
+              image: coin.image || null
+            };
+            return true;
+          }
+        }
+        return false;
+      } catch (e) {
+        console.warn('CoinGecko API error:', e);
+        return false;
+      }
+    },
+
+    /**
+     * Fallback: Fetch XDC price from CoinCap
+     */
+    async fetchFromCoinCap() {
+      try {
+        const res = await fetch('https://api.coincap.io/v2/assets/xdc-network');
+
+        if (res.ok) {
+          const { data } = await res.json();
+          if (data) {
+            this.xdcPriceData = {
+              price: parseFloat(data.priceUsd) || 0,
+              priceChange24h: parseFloat(data.changePercent24Hr) || 0,
+              marketCap: parseFloat(data.marketCapUsd) || 0,
+              image: this.xdcPriceData.image // Keep existing image if any
+            };
+            return true;
+          }
+        }
+        return false;
+      } catch (e) {
+        console.warn('CoinCap API error:', e);
+        return false;
+      }
+    },
+
+    /**
+     * Fallback: Fetch XDC price from CryptoCompare
+     */
+    async fetchFromCryptoCompare() {
+      try {
+        const res = await fetch(
+          'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=XDC&tsyms=USD'
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.RAW && data.RAW.XDC && data.RAW.XDC.USD) {
+            const coinData = data.RAW.XDC.USD;
+            this.xdcPriceData = {
+              price: coinData.PRICE || 0,
+              priceChange24h: coinData.CHANGEPCT24HOUR || 0,
+              marketCap: coinData.MKTCAP || 0,
+              image: coinData.IMAGEURL
+                ? `https://www.cryptocompare.com${coinData.IMAGEURL}`
+                : this.xdcPriceData.image
+            };
+            return true;
+          }
+        }
+        return false;
+      } catch (e) {
+        console.warn('CryptoCompare API error:', e);
+        return false;
+      }
+    },
+
+    /**
+     * checks if network supports ens
      * and creates a new name resolver instance
      */
     async setupNameResolver() {
@@ -495,6 +684,7 @@ export default {
      */
     refresh() {
       this.setTokenAndEthBalance();
+      this.fetchPriceData(); // Also refresh price data
     },
     /**
      * calls hardware wallet show address function
@@ -545,13 +735,6 @@ export default {
     openChangeAddress() {
       this.showChangeAddress = true;
     },
-    /**
-     * sets showPaperWallet to true
-     * to open the modal
-     */
-    /* openPaperWallet() {
-      EventBus.$emit('openPaperWallet');
-    }, */
     /**
      * Copies address
      */

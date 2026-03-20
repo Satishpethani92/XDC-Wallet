@@ -203,7 +203,7 @@ import { MAIN_TOKEN_ADDRESS } from '@/core/helpers/common';
 import buyMore from '@/core/mixins/buyMore.mixin.js';
 import { fromBase, toBase } from '@/core/helpers/unit';
 import SendTransaction from '@/modules/send/handlers/handlerSend';
-import xrc20Tokens from '../xrc20Tokens.js';
+import xrc20TokensOriginal from '../xrc20Tokens.js';
 import xrc20Abi from '../../modules/swap/handlers/abi/xrc20';
 
 export default {
@@ -255,8 +255,9 @@ export default {
       gasEstimationIsReady: false,
       localGasPrice: '0',
       selectedMax: false,
-      xrc20Tokens,
-      tokenPrices: {} // To store prices for all tokens
+      xrc20Tokens: [...xrc20TokensOriginal], // Create a copy to avoid mutation
+      tokenPrices: {}, // To store prices for all tokens
+      loadingPrices: false
     };
   },
   computed: {
@@ -285,7 +286,11 @@ export default {
           };
     },
     isFromNetworkCurrency() {
-      return this.selectedCurrency?.contract === MAIN_TOKEN_ADDRESS;
+      return (
+        this.selectedCurrency?.contract === MAIN_TOKEN_ADDRESS ||
+        this.selectedCurrency?.contract === 'native' ||
+        this.selectedCurrency?.isNative
+      );
     },
     isDisabledNextBtn() {
       return (
@@ -356,10 +361,10 @@ export default {
      * Formats each token to be used in mew-select
      */
     tokens() {
-      // no ref copy
-      const tokensList = this.tokensList.slice().filter(t => {
-        return !t.isHidden;
-      });
+      // Filter out XDC/native token from tokensList since we'll add it from xrc20Tokens
+      const tokensList = this.tokensList
+        .slice()
+        .filter(t => !t.isHidden && t.symbol !== 'XDC' && t.symbol !== 'TXDC');
 
       // handle imgs for top section
       const imgs = tokensList.map(item => {
@@ -372,7 +377,18 @@ export default {
         return item.img;
       });
 
-      // if wallet has no ETH
+      // Get XRC20 tokens with balances (includes native XDC)
+      const xrc20WithBalances = this.getXrc20TokensForSelect();
+
+      // Add XDC images to the top section imgs
+      const xdcToken = xrc20WithBalances.find(
+        t => t.isNative || t.symbol === 'XDC'
+      );
+      if (xdcToken && xdcToken.img) {
+        imgs.unshift(xdcToken.img);
+      }
+
+      // if wallet has no ETH/XDC
       BigNumber(this.balanceInETH).lte(0)
         ? tokensList.unshift({
             hasNoEth: true,
@@ -388,15 +404,25 @@ export default {
         {
           text: 'Select Token',
           imgs: imgs.splice(0, 5),
-          total: `${this.tokensList.length}`,
+          total: `${this.tokensList.length + this.xrc20Tokens.length}`,
           divider: true,
           selectLabel: true
         },
         {
           header: 'My Wallet'
-        },
-        ...tokensList
+        }
       ];
+
+      // Add native XDC first if available
+      const nativeXdc = xrc20WithBalances.find(
+        t => t.isNative || t.contract === 'native'
+      );
+      if (nativeXdc) {
+        returnedArray.push(nativeXdc);
+      }
+
+      // Add other tokens from tokensList
+      returnedArray.push(...tokensList);
 
       // add custom tokens section
       const customTokens = this.customTokens.reduce((arr, item) => {
@@ -446,37 +472,15 @@ export default {
         returnedArray.push(...customTokens);
       }
 
-      // add XRC20 tokens section
-      if (this.xrc20Tokens && this.xrc20Tokens.length > 0) {
-        const xrc20WithBalances = this.xrc20Tokens.map(token => {
-          const enrichedToken = { ...token };
-          const priceData = this.tokenPrices[token.contract];
-
-          if (priceData) {
-            const balance = token.balancef || '0';
-            const usdBalance = new BigNumber(balance)
-              .times(priceData.price)
-              .toFixed(2);
-            enrichedToken.totalBalance = this.getFiatValue(usdBalance);
-            enrichedToken.price = this.getFiatValue(priceData.price);
-            enrichedToken.img = priceData.image || enrichedToken.image;
-          } else {
-            enrichedToken.totalBalance = '$0.00';
-            enrichedToken.price = '$0.00';
-          }
-
-          enrichedToken.tokenBalance = token.balancef || '0';
-          enrichedToken.subtext = token.name;
-          enrichedToken.value = token.contract;
-          enrichedToken.name = token.symbol;
-
-          return enrichedToken;
-        });
-
+      // add XRC20 tokens section (excluding native XDC which is already added)
+      const xrc20NonNative = xrc20WithBalances.filter(
+        t => !t.isNative && t.contract !== 'native'
+      );
+      if (xrc20NonNative.length > 0) {
         returnedArray.push({
           header: 'XRC20 Tokens'
         });
-        returnedArray.push(...xrc20WithBalances);
+        returnedArray.push(...xrc20NonNative);
       }
 
       return returnedArray;
@@ -633,14 +637,25 @@ export default {
       }
     },
     web3(newVal) {
-      if (newVal) this.fetchXRC20Balances();
+      if (newVal) this.fetchAllTokenData();
     },
     isPrefilled() {
       this.prefillForm();
     },
     tokensList: {
       handler: function (val) {
-        this.selectedCurrency = val.length > 0 ? val[0] : {};
+        // Find native XDC token from xrc20Tokens instead
+        const nativeXdc = this.xrc20Tokens.find(
+          t => t.isNative || t.contract === 'native'
+        );
+        if (nativeXdc && nativeXdc.balance) {
+          this.selectedCurrency = this.formatXrc20ForSelect(nativeXdc);
+        } else if (val.length > 0) {
+          this.selectedCurrency = val[0];
+        } else {
+          this.selectedCurrency = {};
+        }
+
         if (this.sendTx) {
           this.sendTx.setCurrency(this.selectedCurrency);
         }
@@ -654,7 +669,6 @@ export default {
       }
     },
     amount(newVal) {
-      // make sure amount never becomes null
       if (!newVal) this.amount = '0';
       if (this.isValidAmount) {
         this.sendTx.setValue(this.getCalculatedAmount);
@@ -693,7 +707,6 @@ export default {
     network() {
       this.clear();
       const currentGasPrice = this.gasPrice;
-      // wait for gas price to update after network is updated
       const x = setInterval(() => {
         if (this.gasPrice !== currentGasPrice) {
           this.localGasPrice = this.gasPrice;
@@ -706,8 +719,7 @@ export default {
       this.clear();
       this.debounceAmountError('0');
       if (newVal) {
-        this.fetchXRC20Balances();
-        this.fetchAllTokenPrices();
+        this.fetchAllTokenData();
       }
     },
     txFeeETH(newVal) {
@@ -719,13 +731,24 @@ export default {
     }
   },
   async mounted() {
-    await this.fetchXRC20Balances();
-    this.fetchAllTokenPrices();
+    await this.fetchAllTokenData();
     this.setSendTransaction();
     this.gasLimit = this.prefilledGasLimit;
-    this.selectedCurrency = this.tokensList[0];
-    this.sendTx.setCurrency(this.selectedCurrency);
-    this.sendTx.setLocalGasPrice(this.actualGasPrice);
+
+    // Set native XDC as default selected currency
+    const nativeXdc = this.xrc20Tokens.find(
+      t => t.isNative || t.contract === 'native'
+    );
+    if (nativeXdc) {
+      this.selectedCurrency = this.formatXrc20ForSelect(nativeXdc);
+    } else if (this.tokensList.length > 0) {
+      this.selectedCurrency = this.tokensList[0];
+    }
+
+    if (this.sendTx) {
+      this.sendTx.setCurrency(this.selectedCurrency);
+      this.sendTx.setLocalGasPrice(this.actualGasPrice);
+    }
   },
   created() {
     this.debouncedGasLimitError = debounce(value => {
@@ -741,10 +764,138 @@ export default {
     }, 500);
   },
   methods: {
+    /**
+     * Fetch all token data (prices + balances)
+     */
+    async fetchAllTokenData() {
+      if (!this.address) return;
+      this.loadingPrices = true;
+      try {
+        await this.fetchAllTokenPrices();
+        await this.fetchXRC20Balances();
+      } catch (error) {
+        console.error('Error fetching token data:', error);
+      }
+      this.loadingPrices = false;
+    },
+
+    /**
+     * Fetch prices from multiple APIs with fallbacks
+     */
     async fetchAllTokenPrices() {
       const allTokens = [...this.xrc20Tokens, ...this.customTokens];
-      await this.fetchFromCoinGecko(allTokens);
+
+      // Try CoinGecko first (using coingeckoId - more reliable)
+      await this.fetchFromCoinGeckoById(allTokens);
+
+      // Fallback to CoinCap for any missing prices
+      await this.fetchFromCoinCap(allTokens);
     },
+
+    /**
+     * Primary API: CoinGecko using IDs (more reliable than symbols)
+     */
+    async fetchFromCoinGeckoById(tokensToFetch) {
+      try {
+        const tokensWithIds = tokensToFetch.filter(t => t.coingeckoId);
+        if (tokensWithIds.length === 0) return;
+
+        const ids = [...new Set(tokensWithIds.map(t => t.coingeckoId))].join(
+          ','
+        );
+
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=false`
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          data.forEach(coin => {
+            const matchingTokens = tokensToFetch.filter(
+              t => t.coingeckoId === coin.id
+            );
+
+            matchingTokens.forEach(token => {
+              const key = token.contract || token.symbol;
+              this.$set(this.tokenPrices, key, {
+                price: coin.current_price || 0,
+                change24h: coin.price_change_percentage_24h || 0,
+                marketCap: coin.market_cap || 0,
+                image: coin.image,
+                source: 'coingecko'
+              });
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('CoinGecko API error:', e);
+      }
+    },
+
+    /**
+     * Fallback API 1: CoinCap (free, no CORS issues)
+     */
+    async fetchFromCoinCap(tokensToFetch) {
+      try {
+        const missingTokens = tokensToFetch.filter(t => {
+          const key = t.contract || t.symbol;
+          return !this.tokenPrices[key];
+        });
+
+        if (missingTokens.length === 0) return;
+
+        // CoinCap asset mapping (symbol to coincap id)
+        const coinCapMapping = {
+          XDC: 'xdc-network',
+          PLI: 'plugin',
+          SRX: 'storx',
+          CGO: 'comtech-gold'
+        };
+
+        for (const token of missingTokens) {
+          const coinCapId = coinCapMapping[token.symbol];
+          if (!coinCapId) continue;
+
+          try {
+            const res = await fetch(
+              `https://api.coincap.io/v2/assets/${coinCapId}`
+            );
+            if (res.ok) {
+              const { data } = await res.json();
+              if (data) {
+                const key = token.contract || token.symbol;
+                this.$set(this.tokenPrices, key, {
+                  price: parseFloat(data.priceUsd) || 0,
+                  change24h: parseFloat(data.changePercent24Hr) || 0,
+                  marketCap: parseFloat(data.marketCapUsd) || 0,
+                  image: null,
+                  source: 'coincap'
+                });
+              }
+            }
+          } catch (e) {
+            // Continue to next token
+          }
+        }
+      } catch (e) {
+        console.warn('CoinCap API error:', e);
+      }
+    },
+
+    /**
+     * Get native XDC balance
+     */
+    async getNativeBalance() {
+      try {
+        if (!this.web3 || !this.web3.eth || !this.address) return '0';
+        const balanceWei = await this.web3.eth.getBalance(this.address);
+        return balanceWei.toString();
+      } catch (e) {
+        console.error('Error getting native balance:', e);
+        return '0';
+      }
+    },
+
     normalizeXdcAddress(address) {
       if (
         typeof address === 'string' &&
@@ -754,54 +905,29 @@ export default {
       }
       return address;
     },
-    async fetchFromCoinGecko(tokensToFetch) {
-      try {
-        const tokensWithPotentialIds = tokensToFetch.filter(
-          t => t.symbol && t.symbol.length > 0
-        );
 
-        if (tokensWithPotentialIds.length === 0) return;
-
-        const symbols = [
-          ...new Set(tokensWithPotentialIds.map(t => t.symbol.toLowerCase()))
-        ].join(',');
-
-        const res = await fetch(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&symbols=${symbols}`
-        );
-
-        if (res.ok) {
-          const data = await res.json();
-          data.forEach(coin => {
-            const symbolUpper = coin.symbol.toUpperCase();
-            const matchingTokens = tokensToFetch.filter(
-              t => t.symbol.toUpperCase() === symbolUpper
-            );
-
-            if (matchingTokens.length > 0) {
-              matchingTokens.forEach(token => {
-                const key = token.contract || token.symbol;
-                this.$set(this.tokenPrices, key, {
-                  price: coin.current_price || 0,
-                  change24h: coin.price_change_percentage_24h || 0,
-                  marketCap: coin.market_cap || 0,
-                  image: coin.image,
-                  source: 'coingecko'
-                });
-              });
-            }
-          });
-        }
-      } catch (e) {
-        // console.error('CoinGecko API error:', e);
-      }
-    },
+    /**
+     * Fetch XRC20 token balances including native XDC
+     */
     async fetchXRC20Balances() {
       if (!this.address || !this.web3) return;
 
       const balances = await Promise.all(
         this.xrc20Tokens.map(async token => {
           try {
+            // Handle native XDC token differently
+            if (token.isNative || token.contract === 'native') {
+              const balance = await this.getNativeBalance();
+              const decimals = 18;
+              return {
+                ...token,
+                balance: balance,
+                balancef: fromBase(balance, decimals),
+                decimals: decimals
+              };
+            }
+
+            // Handle XRC20 tokens
             const contract = new this.web3.eth.Contract(
               xrc20Abi,
               token.contract
@@ -818,13 +944,78 @@ export default {
               decimals: parseInt(decimals)
             };
           } catch (e) {
+            console.error(`Error fetching balance for ${token.symbol}:`, e);
             return token; // Fallback to original token data
           }
         })
       );
 
       this.xrc20Tokens = balances;
+
+      // Update selected currency if it's native XDC
+      if (this.isFromNetworkCurrency) {
+        const nativeXdc = this.xrc20Tokens.find(
+          t => t.isNative || t.contract === 'native'
+        );
+        if (nativeXdc) {
+          this.selectedCurrency = this.formatXrc20ForSelect(nativeXdc);
+          if (this.sendTx) {
+            this.sendTx.setCurrency(this.selectedCurrency);
+          }
+        }
+      }
     },
+
+    /**
+     * Format XRC20 token for mew-select
+     */
+    formatXrc20ForSelect(token) {
+      const priceData = this.tokenPrices[token.contract || token.symbol];
+
+      const enrichedToken = { ...token };
+
+      if (priceData) {
+        const balance = token.balancef || '0';
+        const usdBalance = new BigNumber(balance)
+          .times(priceData.price)
+          .toFixed(2);
+        enrichedToken.totalBalance = this.getFiatValue(usdBalance);
+        enrichedToken.price = this.getFiatValue(priceData.price);
+        enrichedToken.img =
+          priceData.image ||
+          token.image ||
+          'https://coin-images.coingecko.com/coins/images/2912/large/xdc-icon.png?1696503661';
+      } else {
+        enrichedToken.totalBalance = '$0.00';
+        enrichedToken.price = '$0.00';
+        // Default XDC image
+        if (token.isNative || token.symbol === 'XDC') {
+          enrichedToken.img =
+            'https://coin-images.coingecko.com/coins/images/2912/large/xdc-icon.png?1696503661';
+        }
+      }
+
+      enrichedToken.tokenBalance = token.balancef || '0';
+      enrichedToken.subtext = token.name;
+      enrichedToken.value = token.contract;
+      enrichedToken.name = token.symbol;
+
+      // Important: Set contract to MAIN_TOKEN_ADDRESS for native token
+      // so isFromNetworkCurrency works correctly
+      if (token.isNative || token.contract === 'native') {
+        enrichedToken.contract = MAIN_TOKEN_ADDRESS;
+      }
+
+      return enrichedToken;
+    },
+
+    /**
+     * Get XRC20 tokens formatted for mew-select
+     */
+    getXrc20TokensForSelect() {
+      return this.xrc20Tokens.map(token => this.formatXrc20ForSelect(token));
+    },
+
     localGasPriceWatcher(newVal) {
       const total = BigNumber(newVal).plus(this.amount);
       const amt = toBase(this.amount, this.selectedCurrency?.decimals);
@@ -856,7 +1047,19 @@ export default {
       if (this.$refs && this.$refs.addressInput)
         this.$refs.addressInput.clear();
       this.toAddress = '';
-      this.selectedCurrency = this.tokensList[0];
+
+      // Set native XDC as default
+      const nativeXdc = this.xrc20Tokens.find(
+        t => t.isNative || t.contract === 'native'
+      );
+      if (nativeXdc) {
+        this.selectedCurrency = this.formatXrc20ForSelect(nativeXdc);
+      } else if (this.tokensList.length > 0) {
+        this.selectedCurrency = this.tokensList[0];
+      } else {
+        this.selectedCurrency = {};
+      }
+
       this.sendTx = null;
       this.isValidAddress = false;
       this.amount = '0';

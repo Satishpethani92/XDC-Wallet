@@ -1,5 +1,14 @@
 export default [
   {
+    symbol: 'XDC',
+    contract: 'native',
+    decimals: 18,
+    name: 'XDC Network',
+    coingeckoId: 'xdce-crowd-sale',
+    isNative: true,
+    disableSwap: true
+  },
+  {
     symbol: 'DOPU',
     contract: '0x8b20C72f1B138A41D2193dd056E117dce915ba8b',
     decimals: 18,
