@@ -7,6 +7,7 @@ import {
   ROOTSTOCKTESTNET
 } from '@/utils/networks/types';
 import {
+  ethereum,
   ledgerEthereum,
   ledgerLiveEthereum,
   ledgerEthereumClassic,
@@ -38,7 +39,7 @@ const appList = [
   },
   {
     network: XDC,
-    paths: [xdcnetwork]
+    paths: [xdcnetwork, ethereum]
   },
   {
     network: ROOTSTOCK,
